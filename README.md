@@ -1,10 +1,10 @@
-# XOLOme Official Website
+# XOLOme Website
 
 XOLOme 响应式品牌官网，支持桌面端与移动端，可直接部署到 Cloudflare Pages。
 
 ## Cloudflare Pages
 
-- Project name: `xolome-official-website`
+- Project name: `xolome-website`
 - Build command: `npm run build`
 - Build output directory: `dist`
 - Production branch: `main`
@@ -12,7 +12,7 @@ XOLOme 响应式品牌官网，支持桌面端与移动端，可直接部署到 
 部署完成后默认地址：
 
 ```text
-https://xolome-official-website.pages.dev/
+https://xolome-website.pages.dev/
 ```
 
 ## 本地命令
@@ -57,4 +57,4 @@ npm run deploy
 ## 联系方式
 
 - Email: INFO@xolome.com
-- Website: https://xolome-official-website.pages.dev/
+- Website: https://xolome-website.pages.dev/

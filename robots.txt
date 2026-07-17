@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://xolome-official-website.pages.dev/sitemap.xml
+Sitemap: https://xolome-website.pages.dev/sitemap.xml

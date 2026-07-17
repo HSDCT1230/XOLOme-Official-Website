@@ -1,11 +1,11 @@
 {
-  "name": "xolome-official-website",
+  "name": "xolome-website",
   "version": "1.0.0",
   "private": true,
   "description": "XOLOme official static website prepared for Cloudflare Pages.",
   "scripts": {
     "build": "node scripts/build-pages.mjs",
     "preview": "npm run build && npx wrangler@latest pages dev ./dist",
-    "deploy": "npm run build && npx wrangler@latest pages deploy ./dist --project-name xolome-official-website --branch main"
+    "deploy": "npm run build && npx wrangler@latest pages deploy ./dist --project-name xolome-website --branch main"
   }
 }
