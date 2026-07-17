@@ -917,25 +917,66 @@ header.masthead.menu-open .nav-toggle {
   }
 }
 
-@media (max-width: 760px) {
-  .nav {
-    top: calc(100% + 0.45rem);
-    right: 0.35rem;
-    width: min(18.5rem, calc(100vw - 1.5rem));
-    padding: 0.2rem;
-    border-radius: 0.9rem;
+/* Mobile dropdown: desktop .nav { justify-content:flex-end } was shrinking
+   the grid column to content width (~108px) inside a ~296px panel. */
+@media (max-width: 960px) {
+  header.masthead .nav {
+    top: calc(100% + 0.5rem);
+    right: 0;
+    left: auto;
+    display: grid;
+    width: min(20.5rem, calc(100vw - 1.5rem));
+    grid-template-columns: minmax(0, 1fr);
+    justify-content: stretch;
+    justify-items: stretch;
+    align-content: start;
+    align-items: stretch;
+    gap: 0;
+    padding: 0.35rem;
+    border-radius: 1rem;
     transform-origin: top right;
   }
 
-  .masthead.menu-open .nav {
-    transform: translateY(0) scale(1);
+  header.masthead.menu-open .nav {
+    transform: translateY(0);
   }
 
-  .button--nav,
-  .nav__link {
-    min-height: 2.85rem;
-    padding: 0 0.85rem;
-    font-size: 0.72rem;
+  header.masthead .nav .nav__link,
+  header.masthead .nav .button--nav {
+    display: flex;
+    width: 100%;
+    max-width: none;
+    min-height: 3.25rem;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 1.05rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    white-space: nowrap;
+  }
+
+  header.masthead .nav .button--nav {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 760px) {
+  header.masthead .nav {
+    top: calc(100% + 0.4rem);
+    right: 0;
+    left: 0;
+    width: auto;
+    margin-inline: 0;
+    border-radius: 0.95rem;
+  }
+
+  header.masthead .nav .nav__link,
+  header.masthead .nav .button--nav {
+    min-height: 3.15rem;
+    padding: 0 1rem;
+    font-size: 0.95rem;
   }
 }
 
@@ -971,8 +1012,9 @@ header.masthead.menu-open .nav-toggle {
     font-size: 1.9rem;
   }
 
-  .nav {
-    width: min(17rem, calc(100vw - 1rem));
-    right: 0;
+  header.masthead .nav .nav__link,
+  header.masthead .nav .button--nav {
+    min-height: 3rem;
+    font-size: 0.9rem;
   }
 }
