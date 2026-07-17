@@ -1,0 +1,956 @@
+/* Local refinements for the G:\code working copy. */
+
+.button--primary {
+  border-color: rgba(53, 75, 45, 0.38);
+  color: #10170f;
+  background: #7fa66b;
+  box-shadow: 0 0.35rem 0.9rem rgba(0, 0, 0, 0.12);
+}
+
+.button--primary span {
+  color: #edf4e9;
+  background: rgba(8, 12, 8, 0.5);
+  box-shadow: none;
+}
+
+.button--primary:hover {
+  border-color: rgba(53, 75, 45, 0.48);
+  background: #769c64;
+  box-shadow: 0 0.45rem 1rem rgba(0, 0, 0, 0.14);
+  transform: translateY(-1px);
+}
+
+.button--ghost:hover {
+  border-color: rgba(127, 166, 107, 0.58);
+  color: #10170f;
+  background: #7fa66b;
+}
+
+.contact-band .button--primary.button--large {
+  position: relative;
+  top: clamp(0.65rem, 1.4vw, 1.1rem);
+  align-self: end;
+  min-width: 0;
+  margin-left: auto;
+  padding: 0.48rem 0.5rem 0.48rem 1.1rem;
+  gap: 0.9rem;
+  border-color: var(--xolo-green);
+  border-radius: 999px;
+  color: #071006;
+  background: var(--xolo-green);
+  box-shadow: none;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.contact-band .button--primary.button--large span {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  color: #fff;
+  background: rgba(4, 10, 4, 0.78);
+  border-radius: 50%;
+}
+
+.contact-band .button--primary.button--large:hover,
+.contact-band .button--primary.button--large:focus-visible,
+.contact-band .button--primary.button--large:active {
+  border-color: rgba(110, 199, 59, 0.58);
+  color: var(--xolo-green-soft);
+  background: rgba(110, 199, 59, 0.08);
+  box-shadow: none;
+}
+
+.contact-band .button--primary.button--large:hover span,
+.contact-band .button--primary.button--large:focus-visible span,
+.contact-band .button--primary.button--large:active span {
+  color: #071006;
+  background: var(--xolo-green);
+}
+
+.contact-band__inner {
+  border-top: 0;
+  border-bottom: 0;
+}
+
+/* Let the last band flow straight into the footer as one continuous ending:
+   tighter cue spacing, no doubled hairline seam. */
+.contact-band > .section-guide {
+  margin: clamp(1.5rem, 3vw, 2.5rem) auto clamp(0.75rem, 1.5vw, 1.25rem);
+}
+
+.footer {
+  padding-bottom: 1.4rem;
+}
+
+.footer__inner {
+  border-top: 0;
+  padding-top: 0.5rem;
+  gap: 1.4rem;
+}
+
+.footer__copy {
+  border-top-color: rgba(255, 255, 255, 0.07);
+  padding-right: 0;
+}
+
+.footer__meta {
+  justify-self: start;
+  text-align: left;
+}
+
+.footer__logo {
+  justify-self: end;
+  align-self: start;
+}
+
+/* Contact: left copy stays put; right stack = product image + CTA under it. */
+.contact-band__inner {
+  display: grid;
+  grid-template-columns: minmax(14rem, 0.95fr) minmax(18rem, 1.15fr);
+  align-items: end;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  min-height: clamp(22rem, 46vh, 32rem);
+  overflow: hidden;
+}
+
+.contact-band__copy {
+  position: relative;
+  z-index: 1;
+  align-self: end;
+  max-width: none;
+  min-width: 0;
+  /* Lift the title a touch above the image/button baseline. */
+  transform: translateY(clamp(-4rem, -7vh, -2.5rem));
+}
+
+/* Restore original 2-line headline — never character-stack from tiny max-width. */
+.contact-band__copy h2 {
+  max-width: none;
+  margin: 0.85rem 0 0;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  line-break: auto;
+  text-wrap: wrap;
+}
+
+.contact-band__copy h2 span {
+  display: block;
+  white-space: nowrap;
+}
+
+.contact-band__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: end;
+  gap: clamp(1rem, 2.2vh, 1.6rem);
+  min-width: 0;
+  /* Sit a bit lower than the left title block. */
+  transform: translateY(clamp(1.35rem, 3.2vh, 2.75rem));
+}
+
+.contact-band__media {
+  width: 100%;
+  max-width: min(100%, 44rem);
+  margin: 0;
+}
+
+.contact-band__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 1.4rem 2.8rem rgba(0, 0, 0, 0.45));
+}
+
+.contact-band__action {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.contact-band__action .button--primary.button--large {
+  top: 0;
+  margin: 0;
+  padding: 0.7rem 0.7rem 0.7rem 1.6rem;
+  gap: 1.1rem;
+  font-size: 1.02em;
+}
+
+.contact-band__action .button--primary.button--large span {
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
+/* Lock other section titles to designed line breaks (no vertical glyph stack). */
+.hero-copy h1,
+.intro-band__copy h2,
+.section-head h2,
+.about-stage__copy h2,
+.collab-stage__copy h3,
+.x1-stage__copy h3 {
+  max-width: none;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  line-break: auto;
+  text-wrap: wrap;
+}
+
+.hero-copy h1 span,
+.intro-band__copy h2 span,
+.section-head h2 span,
+.about-stage__copy h2 span,
+.collab-stage__copy h3 span,
+.x1-stage__copy h3 span {
+  display: block;
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .contact-band__inner {
+    grid-template-columns: minmax(12rem, 1fr) minmax(14rem, 0.9fr);
+    gap: clamp(1.25rem, 3vw, 2rem);
+  }
+}
+
+@media (max-width: 760px) {
+  .contact-band__inner {
+    grid-template-columns: 1fr;
+    align-items: start;
+    min-height: 0;
+    gap: 1.25rem;
+  }
+
+  .contact-band__aside {
+    align-items: stretch;
+    transform: none;
+  }
+
+  .contact-band__copy {
+    transform: none;
+  }
+
+  .contact-band__media {
+    max-width: min(100%, 24rem);
+    margin-inline: auto;
+  }
+
+  .contact-band__action .button--primary.button--large {
+    width: 100%;
+  }
+
+  /* On narrow screens, allow soft wrap only if a single line would overflow. */
+  .contact-band__copy h2 span,
+  .hero-copy h1 span,
+  .intro-band__copy h2 span,
+  .section-head h2 span,
+  .about-stage__copy h2 span,
+  .x1-stage__copy h3 span {
+    white-space: normal;
+  }
+}
+
+/* Contact modal — balanced on desktop and safe inside short mobile viewports. */
+.contact-modal {
+  width: min(26rem, calc(100% - 2rem));
+  max-height: min(90vh, calc(var(--xo-live-viewport, 100dvh) - 2rem));
+  padding: 0;
+  overflow: hidden;
+}
+
+.contact-modal[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-modal__close {
+  position: absolute;
+  z-index: 2;
+  top: 0.65rem;
+  right: 0.65rem;
+  width: 2.15rem;
+  font-size: 1.2rem;
+}
+
+.contact-modal__content {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: clamp(2rem, 4vh, 2.75rem) clamp(1.15rem, 3vw, 1.75rem)
+    clamp(1.15rem, 3vh, 1.75rem);
+}
+
+.contact-modal__content h2 {
+  margin: 0.65rem 0 1rem;
+  font-size: clamp(1.45rem, 4.2vw, 2.2rem);
+  line-height: 1.1;
+}
+
+.contact-modal__content img {
+  width: min(11.5rem, 72%);
+  height: auto;
+  max-height: min(42vh, calc(var(--xo-live-viewport, 100dvh) * 0.42));
+  aspect-ratio: 888 / 1131;
+  margin: 0 auto 1rem;
+  object-fit: contain;
+}
+
+.contact-modal__content p {
+  margin-bottom: 0.75rem;
+  font-size: clamp(0.84rem, 2.6vw, 0.92rem);
+}
+
+.contact-modal__content a {
+  font-size: clamp(0.78rem, 2.4vw, 0.82rem);
+}
+
+.hero-actions,
+.x1-stage__actions {
+  display: none;
+}
+
+/* Tighter jump landing under the fixed header (all in-page anchors). */
+:root {
+  --xo-anchor-gap: 0;
+}
+
+html {
+  scroll-padding-top: calc(
+    var(--xo-header-height) + env(safe-area-inset-top, 0px) - 2rem
+  );
+}
+
+/* Flat full-bleed header: kill the floating rounded pill completely.
+   Only a single page-black veil gradient remains under the nav links. */
+header.masthead,
+header.masthead.is-scrolled,
+header.masthead.menu-open {
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: none;
+  padding: env(safe-area-inset-top, 0px) 0 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+header.masthead .shell.masthead__inner,
+header.masthead .masthead__inner.shell,
+header.masthead.is-scrolled .shell.masthead__inner,
+header.masthead.is-scrolled .masthead__inner.shell,
+header.masthead.menu-open .shell.masthead__inner,
+header.masthead.menu-open .masthead__inner.shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 100%;
+  max-width: none;
+  min-height: calc(var(--xo-header-height) + 6px);
+  margin: 0;
+  margin-inline: 0;
+  padding-inline: clamp(1rem, 3.2vw, 2.75rem);
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Single veil layer — edge-to-edge, page black, short soft fade. */
+header.masthead::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: auto;
+  left: 0;
+  width: 100%;
+  height: calc(100% + 1.5rem + 6px);
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  pointer-events: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: linear-gradient(
+    180deg,
+    #050608 0%,
+    #050608 34%,
+    rgba(5, 6, 8, 0.88) 52%,
+    rgba(5, 6, 8, 0.5) 70%,
+    rgba(5, 6, 8, 0.18) 86%,
+    rgba(5, 6, 8, 0) 100%
+  );
+}
+
+header.masthead::after {
+  display: none;
+  content: none;
+}
+
+@media (max-width: 760px) {
+  header.masthead,
+  header.masthead.is-scrolled,
+  header.masthead.menu-open {
+    padding: env(safe-area-inset-top, 0px) 0 0;
+  }
+
+  header.masthead .shell.masthead__inner,
+  header.masthead .masthead__inner.shell {
+    width: 100%;
+    padding-inline: clamp(0.85rem, 4vw, 1rem);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  header.masthead::before {
+    height: calc(100% + 2.25rem + 6px);
+  }
+}
+
+/* Shared section-title format for 01 / 03 / 04.
+   02 keeps its original product-name + stage headline structure. */
+.intro-band__copy > .kicker,
+.collab-band .section-head .kicker,
+.about-stage__copy > .kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.intro-band__copy > h2,
+.collab-band .section-head h2,
+.about-stage__copy > h2 {
+  display: grid;
+  gap: 0.06em;
+  max-width: none;
+  margin: 0.85rem 0 0;
+  font-size: clamp(2.45rem, 3.6vw, 4.15rem);
+  font-weight: 760;
+  letter-spacing: 0;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.intro-band__copy > h2 span,
+.collab-band .section-head h2 span,
+.about-stage__copy > h2 span {
+  display: block;
+  line-height: inherit;
+}
+
+@media (max-width: 760px) {
+  .intro-band__copy > h2,
+  .collab-band .section-head h2,
+  .about-stage__copy > h2 {
+    font-size: clamp(2.15rem, 9vw, 2.85rem);
+    line-height: 1.12;
+  }
+}
+
+.hero-copy h1 {
+  font-size: clamp(3.15rem, 5vw, 5.6rem);
+  line-height: 1.08;
+}
+
+@media (min-width: 761px) and (max-width: 960px) {
+  .hero-copy h1 {
+    font-size: clamp(2.85rem, 6vw, 3.8rem);
+  }
+}
+
+@media (max-width: 760px) {
+  .hero-copy h1 {
+    font-size: clamp(2.5rem, 10.5vw, 3.25rem);
+  }
+}
+
+/* Reuse the original modules artwork, cropping around its central X1 unit. */
+.about-stage__aside {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(1.25rem, 2.5vh, 2rem);
+  min-width: 0;
+}
+
+.about-stage__product {
+  position: relative;
+  width: min(100%, clamp(16rem, 28vw, 26rem));
+  aspect-ratio: 4 / 5;
+  margin: 0 0 0 auto;
+  overflow: hidden;
+  background: none;
+}
+
+.about-stage__product img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 320%;
+  max-width: none;
+  height: auto;
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 761px) and (max-width: 960px) {
+  .about-stage__product {
+    width: min(78vw, 24rem);
+    margin-inline: auto;
+  }
+}
+
+/* Section guide — a minimal line-only scroll cue that melts into each section.
+   No fill, no border box, no accent color: just a hairline, a faint label and a
+   thin chevron that inherit the section's own tone. */
+.section-guide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  width: fit-content;
+  margin: clamp(2.5rem, 6vw, 4.5rem) auto clamp(1.75rem, 4vw, 3rem);
+  padding: 0;
+  border: 0;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.36em;
+  text-indent: 0.36em;
+  text-transform: uppercase;
+  transition: color 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* The hairline — the "line" that anchors the cue without any hard edge. */
+.section-guide::before {
+  content: "";
+  width: 1px;
+  height: clamp(1.5rem, 3vw, 2.25rem);
+  background: currentColor;
+  opacity: 0.4;
+}
+
+.section-guide__label {
+  opacity: 0.75;
+}
+
+.section-guide__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+}
+
+.section-guide__icon svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  stroke-width: 1.3px;
+  animation: section-guide-bob 2.4s ease-in-out infinite;
+}
+
+/* Last section points back up: flip the stack so the chevron leads. */
+.section-guide--up {
+  flex-direction: column-reverse;
+}
+
+.section-guide--up .section-guide__icon svg {
+  animation-name: section-guide-bob-up;
+}
+
+/* Floating variant sits over the hero video. */
+.section-guide--float {
+  position: absolute;
+  left: 62%;
+  bottom: clamp(1.1rem, 4vh, 2.4rem);
+  z-index: 3;
+  margin: 0;
+  transform: translateX(-50%);
+}
+
+/* The overview band is a flex row, so its guide can't rely on auto-margin
+   centering — pin it to the band's bottom center instead. */
+.intro-band {
+  position: relative;
+}
+
+.intro-band > .section-guide {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(3rem, 7vh, 4.75rem);
+  margin: 0;
+  transform: translateX(-50%);
+}
+
+.intro-band > .section-guide:hover {
+  transform: translateX(-50%) translateY(3px);
+}
+
+/* The collab gallery fills the frame, so its guide gets a compact transition
+   row of its own instead of sitting over photography. */
+.collab-band > .section-guide {
+  position: static;
+  flex-direction: row;
+  gap: 0.7rem;
+  margin: clamp(1.25rem, 2.5vw, 2rem) auto clamp(1rem, 2vw, 1.5rem);
+}
+
+.collab-band > .section-guide::before {
+  width: clamp(1.5rem, 3vw, 2.5rem);
+  height: 1px;
+}
+
+/* COMPANY is content-led rather than a forced viewport slab. Its compact
+   transition row prevents empty space below the copy and product image. */
+#about {
+  min-height: 0;
+}
+
+#about > .section-guide {
+  position: relative;
+  top: clamp(-1.75rem, -3.5vh, -1rem);
+  flex-direction: row;
+  gap: 0.7rem;
+  margin: 0.25rem auto clamp(2.75rem, 5.5vw, 4.25rem);
+}
+
+#about > .section-guide::before {
+  width: clamp(1.5rem, 3vw, 2.5rem);
+  height: 1px;
+}
+
+/* Keep the X1-to-collab cue visually connected to the product gallery. */
+.x1-band > .section-guide {
+  position: relative;
+  top: clamp(-5rem, -8vh, -3rem);
+  margin: clamp(0.5rem, 1.5vw, 1rem) auto clamp(0.75rem, 1.5vw, 1.25rem)
+    max(var(--gutter), calc((100vw - var(--content-max)) / 2 + var(--gutter)));
+}
+
+/* 02 / THE X1 — preserve the source artwork ratio and restore type hierarchy. */
+.x1-stage__copy h3 {
+  max-width: none;
+  font-size: clamp(2.6rem, 4vw, 4.5rem);
+  line-height: 0.99;
+}
+
+@media (min-width: 961px) {
+  .x1-stage {
+    align-items: start;
+  }
+
+  .x1-stage__media {
+    position: relative;
+    top: clamp(-3.5rem, -6vh, -2rem);
+  }
+}
+
+.x1-stage__copy h3 span {
+  white-space: normal;
+}
+
+.x1-stage__copy p {
+  font-size: clamp(0.94rem, 1.05vw, 1.02rem);
+  line-height: 1.75;
+}
+
+.x1-stage__media .tile--module,
+.x1-stage__media .tile--diy {
+  aspect-ratio: 16 / 10;
+}
+
+/* The lead view is a wide banner: crop the empty dark space above and below
+   the product lineup instead of showing it. */
+.x1-stage__media .tile--wide {
+  aspect-ratio: 21 / 9;
+}
+
+.x1-stage__media .tile img {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  object-fit: cover;
+  object-position: center;
+  background: none;
+  /* Screen-blend the near-black artwork background into the tile so all
+     three frames share the exact same base tone. */
+  mix-blend-mode: screen;
+  transform: scale(1);
+  transform-origin: center;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.x1-stage__media .tile {
+  overflow: hidden;
+  background: linear-gradient(180deg, #0e1013 0, #0a0c0f 100%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .x1-stage__media .tile:hover img {
+    transform: scale(1.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .x1-stage__media .tile img {
+    transition: none;
+  }
+}
+
+/* Site-wide editorial media zoom. Functional images such as logos and the
+   contact QR are intentionally excluded. */
+.expo-gallery__item,
+.about-stage__product,
+.collab-stage__media,
+.hero {
+  overflow: hidden;
+}
+
+/* The character figure zooms freely without being cropped by its frame; it
+   stays anchored to the bottom so it grows upward and sideways. */
+.intro-band__inner,
+.intro-band__character {
+  overflow: visible;
+}
+
+.intro-band__character img {
+  transform-origin: 50% 100%;
+}
+
+.intro-band__character img,
+.expo-gallery__item img,
+.hero__media,
+.collab-stage__video {
+  transform: scale(1);
+  transform-origin: center;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .intro-band__character:hover img,
+  .expo-gallery__item:hover img {
+    transform: scale(1.12);
+  }
+
+  .about-stage__product:hover img {
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+
+  .collab-stage__media:hover .collab-stage__video {
+    transform: scale(1.1);
+  }
+
+  .hero:hover .hero__media {
+    transform: scale(1.07);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-band__character img,
+  .expo-gallery__item img,
+  .about-stage__product img,
+  .hero__media,
+  .collab-stage__video {
+    transition: none;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 960px) {
+  .x1-stage__copy h3 {
+    font-size: clamp(2.2rem, 5vw, 3rem);
+    line-height: 1.05;
+  }
+}
+
+/* Monochrome tones only — brightness follows the section background. */
+.section-guide--on-dark {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.section-guide--on-dark:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.section-guide--on-light {
+  color: rgba(4, 3, 3, 0.34);
+}
+
+.section-guide--on-light:hover {
+  color: rgba(4, 3, 3, 0.72);
+}
+
+.section-guide:hover {
+  transform: translateY(3px);
+}
+
+.section-guide--up:hover {
+  transform: translateY(-3px);
+}
+
+.section-guide--float:hover {
+  transform: translateX(-50%) translateY(3px);
+}
+
+.section-guide:hover .section-guide__icon svg {
+  animation-play-state: paused;
+}
+
+@keyframes section-guide-bob {
+  0%,
+  100% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+}
+
+@keyframes section-guide-bob-up {
+  0%,
+  100% {
+    transform: translateY(2px);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-guide__icon svg {
+    animation: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .contact-modal {
+    width: min(22.5rem, calc(100% - 1rem));
+    max-height: calc(var(--xo-live-viewport, 100dvh) - 0.75rem);
+  }
+
+  .contact-modal__content {
+    padding: 1.85rem 1rem 1.35rem;
+  }
+
+  .contact-modal__content h2 {
+    font-size: clamp(1.35rem, 6vw, 1.85rem);
+  }
+
+  .contact-modal__content img {
+    width: min(10rem, 68vw);
+    max-height: min(38vh, calc(var(--xo-live-viewport, 100dvh) * 0.38));
+  }
+
+  .contact-band__action .button--primary.button--large {
+    width: 100%;
+  }
+
+  .x1-stage__copy h3 {
+    font-size: clamp(2.1rem, 9vw, 2.8rem);
+    line-height: 1.08;
+  }
+
+  .x1-stage__media .tile figcaption {
+    min-height: 2.35rem;
+    padding: 0.55rem 0.65rem;
+    font-size: 0.68rem;
+  }
+
+  .about-stage__product {
+    width: min(78vw, 20rem);
+    margin: 0 auto;
+  }
+
+  .section-guide {
+    margin-top: clamp(2rem, 8vw, 3rem);
+    font-size: 0.56rem;
+    letter-spacing: 0.28em;
+    text-indent: 0.28em;
+  }
+
+  .section-guide__icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .nav {
+    top: calc(100% + 0.45rem);
+    right: 0.35rem;
+    width: min(18.5rem, calc(100vw - 1.5rem));
+    padding: 0.2rem;
+    border-radius: 0.9rem;
+    transform-origin: top right;
+  }
+
+  .masthead.menu-open .nav {
+    transform: translateY(0) scale(1);
+  }
+
+  .button--nav,
+  .nav__link {
+    min-height: 2.85rem;
+    padding: 0 0.85rem;
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .contact-modal {
+    width: calc(100% - 0.75rem);
+    max-height: calc(var(--xo-live-viewport, 100dvh) - 0.5rem);
+    border-radius: 1rem;
+  }
+
+  .contact-modal__content {
+    padding: 1.55rem 0.85rem 1.15rem;
+  }
+
+  .contact-modal__content h2 {
+    margin-bottom: 0.75rem;
+    font-size: 1.35rem;
+  }
+
+  .contact-modal__content img {
+    width: min(9rem, 62vw);
+    max-height: min(34vh, calc(var(--xo-live-viewport, 100dvh) * 0.34));
+  }
+
+  .contact-modal__close {
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 2rem;
+    font-size: 1.05rem;
+  }
+
+  .x1-stage__copy h3 {
+    font-size: 1.9rem;
+  }
+
+  .nav {
+    width: min(17rem, calc(100vw - 1rem));
+    right: 0;
+  }
+}
