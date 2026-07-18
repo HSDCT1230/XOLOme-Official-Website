@@ -24,8 +24,8 @@
     <link rel="canonical" href="https://xolome-website.pages.dev/" />
     <link rel="icon" type="image/png" href="assets/images/logo-white.png" />
     <link rel="preload" href="assets/images/hero-poster.webp" as="image" type="image/webp" />
-    <link rel="stylesheet" href="css/site.min.css?v=20260718c" />
-    <link rel="stylesheet" href="css/xolome-local-overrides.css?v=20260718c" />
+    <link rel="stylesheet" href="css/site.min.css?v=20260718d" />
+    <link rel="stylesheet" href="css/xolome-local-overrides.css?v=20260719l" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -65,13 +65,14 @@
         <div class="shell hero__stage">
           <video
             class="hero__media"
-            src="assets/video/hero-product.mp4"
+            data-lazy-video
+            data-src="assets/video/hero-product.mp4"
             poster="assets/images/hero-poster.webp"
             autoplay
             muted
             loop
             playsinline
-            preload="metadata"
+            preload="none"
             aria-hidden="true"
           ></video>
           <div class="hero__wash" aria-hidden="true"></div>
@@ -302,7 +303,7 @@
             </div>
             <figure class="about-stage__product" aria-label="XOLOme X1 主机">
               <img
-                src="assets/images/x1-modules-cutout.png?v=3"
+                src="assets/images/x1-modules-cutout.png?v=4"
                 alt="XOLOme X1 主机正面展示"
                 width="1920"
                 height="1200"
@@ -378,6 +379,6 @@
       </div>
     </dialog>
 
-    <script src="js/app.js?v=20260718"></script>
+    <script src="js/app.js?v=20260719b"></script>
   </body>
 </html>

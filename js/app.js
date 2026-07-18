@@ -6,9 +6,33 @@ const contactOpeners = document.querySelectorAll("[data-contact-open]");
 const contactCloser = document.querySelector("[data-contact-close]");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let lastDialogTrigger = null;
+let scrollAnimFrame = 0;
 
 if ("scrollRestoration" in history) {
   history.scrollRestoration = "manual";
+}
+
+/** Home anchors (#top / #hero) are not “section deep links”. */
+const HOME_HASHES = new Set(["", "#", "#top", "#hero"]);
+
+function getLocationHash() {
+  return location.hash || "";
+}
+
+function forceScrollTop() {
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+}
+
+// Always open on page 1 (hero). In-page hash clicks still work after load.
+forceScrollTop();
+
+function clearEntryHash() {
+  if (!location.hash) {
+    return;
+  }
+  history.replaceState(null, "", `${location.pathname}${location.search}`);
 }
 
 function updateViewportHeight() {
@@ -46,17 +70,98 @@ function getAnchorOffset() {
   return Number.isFinite(scrollPaddingTop) ? scrollPaddingTop : Math.max(0, fallback);
 }
 
+function easeInOutQuint(t) {
+  return t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+}
+
+function cancelScrollAnimation() {
+  if (scrollAnimFrame) {
+    window.cancelAnimationFrame(scrollAnimFrame);
+    scrollAnimFrame = 0;
+  }
+}
+
+function animateScrollTo(top, onComplete) {
+  cancelScrollAnimation();
+
+  if (reduceMotion) {
+    window.scrollTo({ top, behavior: "auto" });
+    onComplete?.();
+    return;
+  }
+
+  const start = window.scrollY;
+  const delta = top - start;
+  if (Math.abs(delta) < 1) {
+    onComplete?.();
+    return;
+  }
+
+  const duration = Math.min(1100, Math.max(560, Math.abs(delta) * 0.62));
+  const startTime = performance.now();
+
+  const step = (now) => {
+    const progress = Math.min(1, (now - startTime) / duration);
+    window.scrollTo({ top: start + delta * easeInOutQuint(progress), behavior: "auto" });
+    if (progress < 1) {
+      scrollAnimFrame = window.requestAnimationFrame(step);
+      return;
+    }
+    scrollAnimFrame = 0;
+    onComplete?.();
+  };
+
+  scrollAnimFrame = window.requestAnimationFrame(step);
+}
+
+function revealWithin(root) {
+  if (!root) {
+    return;
+  }
+
+  root.querySelectorAll("[data-reveal]:not(.is-revealed)").forEach((el) => {
+    el.classList.add("is-revealed");
+    el.classList.remove("is-reveal-warming");
+  });
+}
+
+function clearRevealWarming(el) {
+  el.classList.remove("is-reveal-warming");
+}
+
+function markRevealed(el) {
+  el.classList.add("is-revealed");
+
+  const onDone = (event) => {
+    if (event && event.target !== el) {
+      return;
+    }
+    clearRevealWarming(el);
+    el.removeEventListener("transitionend", onDone);
+  };
+
+  el.addEventListener("transitionend", onDone);
+  window.setTimeout(() => {
+    clearRevealWarming(el);
+    el.removeEventListener("transitionend", onDone);
+  }, 1200);
+}
+
 function scrollToHash(hash, options = {}) {
-  if (!hash || hash === "#") {
+  if (!hash || HOME_HASHES.has(hash)) {
+    forceScrollTop();
+    if (options.updateHistory !== false && hash && hash !== "#") {
+      history.replaceState(null, "", hash);
+    }
     return;
   }
 
   const target = document.querySelector(hash);
   if (!target) {
+    forceScrollTop();
     return;
   }
 
-  const behavior = options.behavior || (reduceMotion ? "auto" : "smooth");
   const anchorOffset = getAnchorOffset();
   const targetRect = target.getBoundingClientRect();
   const targetTop = targetRect.top + window.scrollY;
@@ -71,13 +176,103 @@ function scrollToHash(hash, options = {}) {
   }
 
   const top = Math.max(0, Math.min(desiredTop, maxScroll));
+  const section = target.closest("section") || target;
 
-  window.scrollTo({ top, behavior });
+  animateScrollTo(top, () => revealWithin(section));
 
   if (options.updateHistory !== false) {
     history.replaceState(null, "", hash);
   }
 }
+
+function initSectionReveals() {
+  const revealTargets = [
+    [".intro-band__copy", "copy", 0],
+    [".intro-band__rail", "media", 120],
+    [".x1-band > .section-head", "copy", 0],
+    [".x1-stage__copy", "copy", 80],
+    [".x1-stage__media .tile", "media", 0],
+    [".collab-band > .section-head", "copy", 0],
+    [".collab-stage__copy", "copy", 70],
+    [".collab-stage__media", "media", 140],
+    [".expo-gallery__item", "media", 0],
+    [".collab-band__footer", "soft", 60],
+    [".about-stage__copy", "copy", 0],
+    [".about-stage__aside", "media", 110],
+    [".contact-band__copy", "copy", 0],
+    [".contact-band__aside", "media", 100],
+  ];
+
+  const nodes = [];
+  revealTargets.forEach(([selector, kind, baseDelay]) => {
+    document.querySelectorAll(selector).forEach((el, index) => {
+      if (el.hasAttribute("data-reveal")) {
+        return;
+      }
+      el.dataset.reveal = kind;
+      el.style.setProperty("--reveal-delay", `${baseDelay + index * 70}ms`);
+      nodes.push(el);
+    });
+  });
+
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    nodes.forEach((el) => el.classList.add("is-revealed"));
+    return;
+  }
+
+  // Reveal anything already on screen before enabling hide styles — avoids a flash.
+  nodes.forEach((el) => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.82 && rect.bottom > 40) {
+      el.classList.add("is-revealed");
+    }
+  });
+
+  document.documentElement.classList.add("has-reveal-motion");
+
+  const warmObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting || entry.target.classList.contains("is-revealed")) {
+          return;
+        }
+        entry.target.classList.add("is-reveal-warming");
+      });
+    },
+    { rootMargin: "40% 0px 40% 0px", threshold: 0 },
+  );
+
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) {
+          return;
+        }
+        const el = entry.target;
+        el.classList.add("is-reveal-warming");
+        markRevealed(el);
+        warmObserver.unobserve(el);
+        obs.unobserve(el);
+      });
+    },
+    { threshold: 0.14, rootMargin: "0px 0px -10% 0px" },
+  );
+
+  nodes.forEach((el) => {
+    if (!el.classList.contains("is-revealed")) {
+      warmObserver.observe(el);
+      observer.observe(el);
+    }
+  });
+}
+
+window.addEventListener("wheel", cancelScrollAnimation, { passive: true });
+window.addEventListener("touchstart", cancelScrollAnimation, { passive: true });
+window.addEventListener("keydown", (event) => {
+  if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) {
+    cancelScrollAnimation();
+  }
+});
 
 menuButton.addEventListener("click", () => {
   const isOpen = header.classList.toggle("menu-open");
@@ -119,14 +314,29 @@ window.addEventListener("orientationchange", updateViewportHeight, { passive: tr
 updateViewportHeight();
 updateHeader();
 
-window.addEventListener("load", () => {
-  if (location.hash) {
-    history.replaceState(null, "", `${location.pathname}${location.search}`);
-  }
+function restoreScrollOnEntry() {
+  // Fresh open / refresh always lands on the first page, even if the URL still
+  // carries a leftover section hash from the previous visit.
+  clearEntryHash();
+  forceScrollTop();
+  window.requestAnimationFrame(() => window.requestAnimationFrame(forceScrollTop));
+  window.setTimeout(forceScrollTop, 0);
+  window.setTimeout(forceScrollTop, 120);
+  window.setTimeout(forceScrollTop, 360);
+}
 
-  const resetToTop = () => window.scrollTo({ top: 0, behavior: "auto" });
-  window.requestAnimationFrame(() => window.requestAnimationFrame(resetToTop));
-  window.setTimeout(resetToTop, 300);
+window.addEventListener("DOMContentLoaded", () => {
+  clearEntryHash();
+  forceScrollTop();
+});
+
+window.addEventListener("load", restoreScrollOnEntry);
+
+// bfcache restore skips `load`; re-apply the same top rule.
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {
+    restoreScrollOnEntry();
+  }
 });
 
 contactOpeners.forEach((opener) =>
@@ -194,3 +404,5 @@ if (reduceMotion) {
     video.pause();
   });
 }
+
+initSectionReveals();

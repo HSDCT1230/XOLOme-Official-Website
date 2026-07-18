@@ -26,6 +26,39 @@
   background: #7fa66b;
 }
 
+/* Masthead「联系我们」: keep button chrome; arrow is typographic, not a badge. */
+header.masthead .nav .button.button--ghost.button--nav {
+  gap: 0.4em;
+}
+
+header.masthead .nav .button.button--ghost.button--nav span[aria-hidden="true"] {
+  display: inline;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0.72;
+  font-size: 1em;
+  font-weight: inherit;
+  line-height: 1;
+  transform: none;
+}
+
+header.masthead .nav .button.button--ghost.button--nav:hover span[aria-hidden="true"],
+header.masthead .nav .button.button--ghost.button--nav:focus-visible span[aria-hidden="true"],
+header.masthead .nav .button.button--ghost.button--nav:active span[aria-hidden="true"] {
+  color: inherit;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0.88;
+  transform: none;
+}
+
 .contact-band .button--primary.button--large {
   position: relative;
   top: clamp(0.65rem, 1.4vw, 1.1rem);
@@ -69,15 +102,10 @@
   background: var(--xolo-green);
 }
 
-.contact-band__inner {
-  border-top: 0;
-  border-bottom: 0;
-}
-
 /* Let the last band flow straight into the footer as one continuous ending:
    tighter cue spacing, no doubled hairline seam. */
 .contact-band > .section-guide {
-  margin: clamp(1.5rem, 3vw, 2.5rem) auto clamp(0.75rem, 1.5vw, 1.25rem);
+  margin: auto auto clamp(0.75rem, 1.5vw, 1.25rem);
 }
 
 .footer {
@@ -105,24 +133,26 @@
   align-self: start;
 }
 
-/* Contact: left copy stays put; right stack = product image + CTA under it. */
+/* Contact: left copy high, right stack = image + CTA — grid align, no transforms. */
 .contact-band__inner {
   display: grid;
   grid-template-columns: minmax(14rem, 0.95fr) minmax(18rem, 1.15fr);
-  align-items: end;
+  align-items: stretch;
   gap: clamp(1.5rem, 4vw, 3.5rem);
   min-height: clamp(22rem, 46vh, 32rem);
-  overflow: hidden;
+  overflow: visible;
+  border-top: 0;
+  border-bottom: 0;
+  padding-block: clamp(1.75rem, 3.5vh, 2.75rem);
 }
 
 .contact-band__copy {
   position: relative;
   z-index: 1;
-  align-self: end;
+  align-self: start;
   max-width: none;
   min-width: 0;
-  /* Lift the title a touch above the image/button baseline. */
-  transform: translateY(clamp(-4rem, -7vh, -2.5rem));
+  padding-top: clamp(0.25rem, 1vh, 0.75rem);
 }
 
 /* Restore original 2-line headline — never character-stack from tiny max-width. */
@@ -144,11 +174,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
   align-self: end;
   gap: clamp(1rem, 2.2vh, 1.6rem);
   min-width: 0;
-  /* Sit a bit lower than the left title block. */
-  transform: translateY(clamp(1.35rem, 3.2vh, 2.75rem));
+  overflow: visible;
+  padding-bottom: clamp(0.35rem, 1vh, 0.85rem);
 }
 
 .contact-band__media {
@@ -217,21 +248,38 @@
   }
 }
 
+/* Mid breakpoint: contact stays 2-col — soften type / allow wrap so titles fit. */
+@media (min-width: 761px) and (max-width: 960px) {
+  .contact-band__copy h2 {
+    font-size: clamp(1.85rem, 3.4vw, 2.65rem);
+    line-height: 1.12;
+  }
+
+  .contact-band__copy h2 span,
+  .intro-band__copy h2 span,
+  .section-head h2 span,
+  .about-stage__copy h2 span {
+    white-space: normal;
+  }
+}
+
 @media (max-width: 760px) {
   .contact-band__inner {
     grid-template-columns: 1fr;
     align-items: start;
     min-height: 0;
     gap: 1.25rem;
+    padding-block: 1.25rem;
   }
 
   .contact-band__aside {
     align-items: stretch;
-    transform: none;
+    justify-content: flex-start;
+    padding-bottom: 0;
   }
 
   .contact-band__copy {
-    transform: none;
+    padding-top: 0;
   }
 
   .contact-band__media {
@@ -244,6 +292,15 @@
   }
 
   /* On narrow screens, allow soft wrap only if a single line would overflow. */
+  .contact-band__copy h2,
+  .hero-copy h1,
+  .intro-band__copy h2,
+  .section-head h2,
+  .about-stage__copy h2,
+  .x1-stage__copy h3 {
+    max-width: none;
+  }
+
   .contact-band__copy h2 span,
   .hero-copy h1 span,
   .intro-band__copy h2 span,
@@ -251,6 +308,29 @@
   .about-stage__copy h2 span,
   .x1-stage__copy h3 span {
     white-space: normal;
+  }
+
+  /* Keep hero copy + rail stacked; avoid mid-width 2-col squeeze. */
+  .hero__content {
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+    gap: 1.1rem;
+  }
+
+  .hero-rail {
+    width: 100%;
+    max-width: none;
+    justify-self: stretch;
+  }
+
+  /* Center the floating hero cue; 62% offset reads clipped on ~390px. */
+  .section-guide--float {
+    left: 50%;
+  }
+
+  /* Avoid 100vw-based side margin shoving the X1 cue off-screen. */
+  .x1-band > .section-guide {
+    margin-inline: auto;
   }
 }
 
@@ -313,9 +393,49 @@
   display: none;
 }
 
-/* Tighter jump landing under the fixed header (all in-page anchors). */
+/* Header offset for scroll-padding / masthead — match site --header-height. */
 :root {
+  --xo-header-height: 5.25rem;
   --xo-anchor-gap: 0;
+  /* One shared page frame under the masthead — every band uses the same height. */
+  --xo-section-min-height: calc(
+    var(--xo-live-viewport, 100dvh) - var(--xo-header-height) - var(--xo-anchor-gap)
+  );
+}
+
+/* Align each page to the same usable viewport proportion. */
+#overview,
+#x1,
+#collab,
+#about,
+#contact {
+  min-height: var(--xo-section-min-height);
+  box-sizing: border-box;
+}
+
+/* Keep the section guide pinned to the bottom of the shared frame. */
+#x1,
+#collab,
+#about,
+#contact {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 960px) {
+  /* Stacked layouts: avoid forced empty slabs; content defines height. */
+  #x1,
+  #collab,
+  #about,
+  #contact {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --xo-header-height: 4.75rem;
+  }
 }
 
 html {
@@ -503,7 +623,7 @@ header.masthead.menu-open .nav-toggle {
   }
 }
 
-/* Reuse the original modules artwork, cropping around its central X1 unit. */
+/* Reuse the modules artwork, framing the central X1 (device + side module). */
 .about-stage__aside {
   display: flex;
   flex-direction: column;
@@ -514,28 +634,33 @@ header.masthead.menu-open .nav-toggle {
 
 .about-stage__product {
   position: relative;
-  width: min(100%, clamp(16rem, 28vw, 26rem));
+  /* Wider frame so the ribbed right face + green side module fit without clipping. */
+  width: min(100%, clamp(20rem, 36vw, 34rem));
   aspect-ratio: 4 / 5;
   margin: 0 0 0 auto;
   overflow: hidden;
   background: none;
 }
 
+/* Cover zoom on the 3-object strip: frame the center X1 (character + ribs +
+   right green module). object-position ~48% crops the left sibling; mild
+   translate keeps the main unit centered without empty left / edge peek. */
 .about-stage__product img {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 320%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   max-width: none;
-  height: auto;
-  transform: translate(-50%, -50%);
-  transform-origin: center;
+  object-fit: cover;
+  object-position: 48% 48%;
+  transform: scale(1.24) translateX(-3%);
+  transform-origin: 42% 50%;
   transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (min-width: 761px) and (max-width: 960px) {
   .about-stage__product {
-    width: min(78vw, 24rem);
+    width: min(86vw, 28rem);
     margin-inline: auto;
   }
 }
@@ -573,7 +698,13 @@ header.masthead.menu-open .nav-toggle {
 }
 
 .section-guide__label {
+  display: inline-block;
+  padding: 0;
+  background: transparent;
+  color: inherit;
   opacity: 0.75;
+  font-weight: 500;
+  line-height: 1.2;
 }
 
 .section-guide__icon {
@@ -630,45 +761,51 @@ header.masthead.menu-open .nav-toggle {
   transform: translateX(-50%) translateY(3px);
 }
 
-/* The collab gallery fills the frame, so its guide gets a compact transition
-   row of its own instead of sitting over photography. */
+/* 03 / IP COLLECTIVE — same vertical cue as overview / X1 (line → label → chevron). */
 .collab-band > .section-guide {
   position: static;
-  flex-direction: row;
-  gap: 0.7rem;
-  margin: clamp(1.25rem, 2.5vw, 2rem) auto clamp(1rem, 2vw, 1.5rem);
+  flex-direction: column;
+  gap: 0.55rem;
+  margin: auto auto clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .collab-band > .section-guide::before {
-  width: clamp(1.5rem, 3vw, 2.5rem);
-  height: 1px;
+  width: 1px;
+  height: clamp(1.5rem, 3vw, 2.25rem);
 }
 
-/* COMPANY is content-led rather than a forced viewport slab. Its compact
-   transition row prevents empty space below the copy and product image. */
-#about {
-  min-height: 0;
-}
-
+/* COMPANY — same vertical cue as other bands. */
 #about > .section-guide {
   position: relative;
-  top: clamp(-1.75rem, -3.5vh, -1rem);
-  flex-direction: row;
-  gap: 0.7rem;
-  margin: 0.25rem auto clamp(2.75rem, 5.5vw, 4.25rem);
+  top: 0;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin: auto auto clamp(1.5rem, 3vw, 2.5rem);
 }
 
 #about > .section-guide::before {
-  width: clamp(1.5rem, 3vw, 2.5rem);
-  height: 1px;
+  width: 1px;
+  height: clamp(1.5rem, 3vw, 2.25rem);
 }
 
-/* Keep the X1-to-collab cue visually connected to the product gallery. */
+/* 02 / THE X1 title block — sit lower in the page frame. */
+.x1-band > .section-head {
+  margin-top: clamp(1.75rem, 4.5vh, 3.25rem);
+  padding-top: clamp(0.75rem, 2vh, 1.5rem);
+}
+
+/* Keep the X1-to-collab cue on the left, within the shared page frame. */
 .x1-band > .section-guide {
   position: relative;
-  top: clamp(-5rem, -8vh, -3rem);
-  margin: clamp(0.5rem, 1.5vw, 1rem) auto clamp(0.75rem, 1.5vw, 1.25rem)
-    max(var(--gutter), calc((100vw - var(--content-max)) / 2 + var(--gutter)));
+  top: 0;
+  align-self: flex-start;
+  margin-top: auto;
+  margin-right: auto;
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  margin-left: max(
+    var(--gutter),
+    calc((100vw - var(--content-max)) / 2 + var(--gutter))
+  );
 }
 
 /* 02 / THE X1 — preserve the source artwork ratio and restore type hierarchy. */
@@ -741,6 +878,25 @@ header.masthead.menu-open .nav-toggle {
   }
 }
 
+/* Soften hero video wash: keep left/bottom text contrast, let the product
+   read clearer through the center and right of the frame. */
+.hero__wash {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(3, 4, 6, 0.38) 0%,
+      rgba(3, 4, 6, 0.16) 26%,
+      rgba(3, 4, 6, 0.04) 48%,
+      rgba(3, 4, 6, 0) 68%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(3, 4, 6, 0.02) 0%,
+      rgba(3, 4, 6, 0) 42%,
+      rgba(3, 4, 6, 0.26) 100%
+    );
+}
+
 /* Site-wide editorial media zoom. Functional images such as logos and the
    contact QR are intentionally excluded. */
 .expo-gallery__item,
@@ -748,6 +904,11 @@ header.masthead.menu-open .nav-toggle {
 .collab-stage__media,
 .hero {
   overflow: hidden;
+}
+
+/* Cutout product on contact — zoom freely, do not crop the scaled edges. */
+.contact-band__media {
+  overflow: visible;
 }
 
 /* The character figure zooms freely without being cropped by its frame; it
@@ -763,6 +924,7 @@ header.masthead.menu-open .nav-toggle {
 
 .intro-band__character img,
 .expo-gallery__item img,
+.contact-band__media img,
 .hero__media,
 .collab-stage__video {
   transform: scale(1);
@@ -776,8 +938,12 @@ header.masthead.menu-open .nav-toggle {
     transform: scale(1.12);
   }
 
+  .contact-band__media:hover img {
+    transform: scale(1.1);
+  }
+
   .about-stage__product:hover img {
-    transform: translate(-50%, -50%) scale(1.12);
+    transform: scale(1.34) translateX(-3%);
   }
 
   .collab-stage__media:hover .collab-stage__video {
@@ -793,6 +959,7 @@ header.masthead.menu-open .nav-toggle {
   .intro-band__character img,
   .expo-gallery__item img,
   .about-stage__product img,
+  .contact-band__media img,
   .hero__media,
   .collab-stage__video {
     transition: none;
@@ -900,7 +1067,7 @@ header.masthead.menu-open .nav-toggle {
   }
 
   .about-stage__product {
-    width: min(78vw, 20rem);
+    width: min(88vw, 24rem);
     margin: 0 auto;
   }
 
@@ -1016,5 +1183,59 @@ header.masthead.menu-open .nav-toggle {
   header.masthead .nav .button--nav {
     min-height: 3rem;
     font-size: 0.9rem;
+  }
+}
+
+/* Section-to-section motion: soft fade/rise reveals + eased hash scroll (JS).
+   Keeps the editorial dark/light tone — no glow, no cards, no purple. */
+html.has-reveal-motion {
+  scroll-behavior: auto;
+}
+
+html.has-reveal-motion [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 1.6rem, 0);
+  transition:
+    opacity 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.95s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* will-change only while approaching / animating — applied via JS classes. */
+html.has-reveal-motion [data-reveal].is-reveal-warming {
+  will-change: opacity, transform;
+}
+
+html.has-reveal-motion [data-reveal="soft"] {
+  transform: translate3d(0, 0.9rem, 0);
+}
+
+html.has-reveal-motion [data-reveal="media"] {
+  transform: translate3d(0, 2.1rem, 0) scale(0.985);
+}
+
+html.has-reveal-motion [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* Slight settle on section guides when their parent band finishes entering. */
+html.has-reveal-motion .section-guide {
+  transition:
+    color 0.4s ease,
+    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.has-reveal-motion {
+    scroll-behavior: auto;
+  }
+
+  html.has-reveal-motion [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
   }
 }
