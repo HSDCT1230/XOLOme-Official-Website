@@ -1,6 +1,6 @@
-import { cp, mkdir, rm, stat } from "node:fs/promises";
+import { cp, mkdir, readdir, rm, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-import { dirname, isAbsolute, relative, resolve } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(scriptDir, "..");
@@ -14,13 +14,35 @@ const staticEntries = [
   "_redirects",
   "css",
   "js",
-  "assets",
 ];
+
+const assetSkipDirNames = new Set(["previews"]);
 
 function assertInsideProject(path) {
   const rel = relative(projectRoot, path);
   if (rel === "" || rel.startsWith("..") || isAbsolute(rel)) {
     throw new Error(`Refusing to write outside the project: ${path}`);
+  }
+}
+
+async function copyAssetsFiltered(sourceDir, destinationDir) {
+  await mkdir(destinationDir, { recursive: true });
+  const entries = await readdir(sourceDir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (entry.isDirectory() && assetSkipDirNames.has(entry.name)) {
+      continue;
+    }
+
+    const from = join(sourceDir, entry.name);
+    const to = join(destinationDir, entry.name);
+
+    if (entry.isDirectory()) {
+      await copyAssetsFiltered(from, to);
+      continue;
+    }
+
+    await cp(from, to);
   }
 }
 
@@ -39,6 +61,14 @@ for (const entry of staticEntries) {
   }
 
   await cp(source, destination, { recursive: true });
+}
+
+const assetsSource = resolve(projectRoot, "assets");
+try {
+  await stat(assetsSource);
+  await copyAssetsFiltered(assetsSource, resolve(outputDir, "assets"));
+} catch {
+  // optional
 }
 
 console.log(`Cloudflare Pages bundle ready: ${relative(projectRoot, outputDir)}`);

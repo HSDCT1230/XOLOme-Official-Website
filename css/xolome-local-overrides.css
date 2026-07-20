@@ -423,12 +423,114 @@ header.masthead .nav .button.button--ghost.button--nav:active span[aria-hidden="
 }
 
 @media (max-width: 960px) {
-  /* Stacked layouts: avoid forced empty slabs; content defines height. */
+  /* Stacked layouts: avoid forced empty slabs; content defines height.
+     Overview (page 2) keeps a full mobile frame — desktop already does. */
   #x1,
   #collab,
   #about,
   #contact {
     min-height: 0;
+  }
+
+  #overview.intro-band {
+    display: flex;
+    flex-direction: column;
+    min-height: var(--xo-section-min-height);
+    padding-block: clamp(0.65rem, 1.5vh, 1rem) clamp(1rem, 2.5vh, 1.5rem);
+  }
+
+  #overview .intro-band__inner {
+    flex: 1 1 auto;
+    min-height: calc(
+      var(--xo-live-viewport, 100dvh) - var(--xo-header-height) -
+        clamp(7.5rem, 14vh, 9.5rem)
+    );
+    grid-template-rows: auto minmax(12rem, 1fr);
+    align-items: stretch;
+  }
+
+  #overview .intro-band__rail {
+    min-height: clamp(15rem, 38vh, 20rem);
+    align-content: end;
+  }
+
+  #overview .intro-band__character {
+    align-self: end;
+    min-height: clamp(12rem, 32vh, 18rem);
+  }
+
+  #overview .intro-band__character img {
+    max-height: min(18rem, 42vh);
+  }
+
+  /* Guides sit below content in normal flow — no overlay on copy/character. */
+  .intro-band > .section-guide,
+  #overview > .section-guide {
+    position: static;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    align-self: center;
+    margin: clamp(0.85rem, 2.5vh, 1.35rem) auto clamp(1rem, 2.5vh, 1.5rem);
+  }
+
+  .intro-band > .section-guide:hover,
+  #overview > .section-guide:hover {
+    transform: translateY(3px);
+  }
+
+  .hero__content {
+    padding-bottom: clamp(5.25rem, 13vh, 6.75rem);
+  }
+
+  .section-guide--float {
+    left: 50%;
+    bottom: max(0.85rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .x1-band > .section-guide {
+    align-self: center;
+    margin: clamp(1.35rem, 4vh, 2.25rem) auto;
+  }
+}
+
+@media (max-width: 760px) {
+  #overview.intro-band {
+    min-height: calc(
+      var(--xo-live-viewport, 100dvh) - var(--xo-header-height)
+    );
+    padding-block: 0.55rem 1rem;
+  }
+
+  #overview .intro-band__inner {
+    min-height: calc(
+      var(--xo-live-viewport, 100dvh) - var(--xo-header-height) - 7.25rem
+    );
+    grid-template-rows: auto minmax(14rem, 1fr);
+  }
+
+  #overview .intro-band__rail {
+    min-height: 0;
+    height: 100%;
+    align-content: stretch;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  #overview .intro-band__character {
+    min-height: clamp(16rem, 46vh, 24rem);
+  }
+
+  #overview .intro-band__character img {
+    width: auto;
+    max-width: 100%;
+    height: 100%;
+    max-height: none;
+    object-fit: contain;
+    object-position: center bottom;
+  }
+
+  .hero__content {
+    padding-bottom: clamp(5.75rem, 15vh, 7.5rem);
   }
 }
 
@@ -440,7 +542,7 @@ header.masthead .nav .button.button--ghost.button--nav:active span[aria-hidden="
 
 html {
   scroll-padding-top: calc(
-    var(--xo-header-height) + env(safe-area-inset-top, 0px) - 2rem
+    var(--xo-header-height) + env(safe-area-inset-top, 0px) + 0.5rem
   );
 }
 
@@ -521,12 +623,12 @@ header.masthead::after {
   content: none;
 }
 
-/* Buttons do not inherit masthead color (UA buttontext = black).
-   Force white icon/border so the mobile circle toggle stays visible. */
+/* Mobile menu toggle — brand green so it reads clearly on the dark veil. */
 header.masthead .nav-toggle {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.12);
+  color: #071006;
+  border-color: var(--xolo-green, #6ec73b);
+  background: var(--xolo-green, #6ec73b);
+  box-shadow: 0 0 0 3px rgba(110, 199, 59, 0.28);
 }
 
 header.masthead .nav-toggle > span:not(.sr-only) {
@@ -534,9 +636,18 @@ header.masthead .nav-toggle > span:not(.sr-only) {
 }
 
 header.masthead.menu-open .nav-toggle {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.62);
-  background: rgba(255, 255, 255, 0.16);
+  color: #071006;
+  border-color: var(--xolo-green-soft, #8de85d);
+  background: var(--xolo-green-soft, #8de85d);
+  box-shadow: 0 0 0 3px rgba(141, 232, 93, 0.35);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  header.masthead .nav-toggle:hover {
+    color: #071006;
+    border-color: var(--xolo-green-soft, #8de85d);
+    background: var(--xolo-green-soft, #8de85d);
+  }
 }
 
 @media (max-width: 760px) {
@@ -564,9 +675,11 @@ header.masthead.menu-open .nav-toggle {
   }
 }
 
-/* Shared section-title format for 01 / 03 / 04.
-   02 keeps its original product-name + stage headline structure. */
-.intro-band__copy > .kicker,
+/* Stronger small-label contrast on light editorial bands. */
+.intro-band .kicker,
+.about-stage__copy > .kicker {
+  color: #2f7a18;
+}
 .collab-band .section-head .kicker,
 .about-stage__copy > .kicker {
   margin: 0;
@@ -743,22 +856,17 @@ header.masthead.menu-open .nav-toggle {
   transform: translateX(-50%);
 }
 
-/* The overview band is a flex row, so its guide can't rely on auto-margin
-   centering — pin it to the band's bottom center instead. */
-.intro-band {
-  position: relative;
-}
-
+/* Overview cue stays in normal flow so it never covers copy/character. */
 .intro-band > .section-guide {
-  position: absolute;
-  left: 50%;
-  bottom: clamp(3rem, 7vh, 4.75rem);
-  margin: 0;
-  transform: translateX(-50%);
+  position: static;
+  left: auto;
+  bottom: auto;
+  margin: clamp(1.25rem, 3vw, 2rem) auto clamp(1.5rem, 3vw, 2.25rem);
+  transform: none;
 }
 
 .intro-band > .section-guide:hover {
-  transform: translateX(-50%) translateY(3px);
+  transform: translateY(3px);
 }
 
 /* 03 / IP COLLECTIVE — same vertical cue as overview / X1 (line → label → chevron). */
@@ -802,10 +910,7 @@ header.masthead.menu-open .nav-toggle {
   margin-top: auto;
   margin-right: auto;
   margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
-  margin-left: max(
-    var(--gutter),
-    calc((100vw - var(--content-max)) / 2 + var(--gutter))
-  );
+  margin-left: var(--gutter, clamp(1.25rem, 4vw, 4.5rem));
 }
 
 /* 02 / THE X1 — preserve the source artwork ratio and restore type hierarchy. */
@@ -918,8 +1023,9 @@ header.masthead.menu-open .nav-toggle {
   overflow: visible;
 }
 
-.intro-band__character img {
-  transform-origin: 50% 100%;
+.intro-band__character picture,
+.x1-stage__media .tile picture {
+  display: contents;
 }
 
 .intro-band__character img,
@@ -975,19 +1081,19 @@ header.masthead.menu-open .nav-toggle {
 
 /* Monochrome tones only — brightness follows the section background. */
 .section-guide--on-dark {
-  color: rgba(255, 255, 255, 0.42);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .section-guide--on-dark:hover {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .section-guide--on-light {
-  color: rgba(4, 3, 3, 0.34);
+  color: rgba(4, 3, 3, 0.62);
 }
 
 .section-guide--on-light:hover {
-  color: rgba(4, 3, 3, 0.72);
+  color: rgba(4, 3, 3, 0.88);
 }
 
 .section-guide:hover {
@@ -1126,6 +1232,24 @@ header.masthead.menu-open .nav-toggle {
 
   header.masthead .nav .button--nav {
     justify-content: space-between;
+    border-color: var(--xolo-green, #6ec73b);
+    color: #071006;
+    background: var(--xolo-green, #6ec73b);
+    border-radius: 0.75rem;
+    box-shadow: none;
+  }
+
+  header.masthead .nav .button--nav span[aria-hidden="true"] {
+    color: #071006;
+    opacity: 0.85;
+  }
+
+  header.masthead .nav .button--nav:hover,
+  header.masthead .nav .button--nav:focus-visible,
+  header.masthead .nav .button--nav:active {
+    border-color: var(--xolo-green-soft, #8de85d);
+    color: #071006;
+    background: var(--xolo-green-soft, #8de85d);
   }
 }
 

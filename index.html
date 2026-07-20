@@ -20,12 +20,18 @@
     <meta property="og:url" content="https://xolome-website-test.pages.dev/" />
     <meta property="og:image" content="https://xolome-website-test.pages.dev/assets/images/hero-poster.webp" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="XOLOme | 情绪陪伴设备" />
+    <meta
+      name="twitter:description"
+      content="XOLOme 将 NFC 实体藏品、可换壳硬件、内容联动与全息 AI 放进同一台设备。"
+    />
+    <meta name="twitter:image" content="https://xolome-website-test.pages.dev/assets/images/hero-poster.webp" />
     <title>XOLOme | 情绪陪伴设备</title>
     <link rel="canonical" href="https://xolome-website-test.pages.dev/" />
     <link rel="icon" type="image/png" href="assets/images/logo-white.png" />
     <link rel="preload" href="assets/images/hero-poster.webp" as="image" type="image/webp" />
-    <link rel="stylesheet" href="css/site.min.css?v=20260718d" />
-    <link rel="stylesheet" href="css/xolome-local-overrides.css?v=20260719l" />
+    <link rel="stylesheet" href="css/site.min.css?v=20260720f" />
+    <link rel="stylesheet" href="css/xolome-local-overrides.css?v=20260720f" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -43,7 +49,7 @@
         <a class="brand" href="#top" aria-label="XOLOme 首页">
           <img class="brand__logo" src="assets/images/logo-white.png" alt="XOLOme" width="720" height="240" />
         </a>
-        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-menu-button>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航" data-menu-button>
           <span class="sr-only">打开导航</span>
           <span></span>
           <span></span>
@@ -121,13 +127,17 @@
           <aside class="intro-band__rail">
             <p class="intro-band__note">YOUR KINDRED<br />SPIRIT</p>
             <figure class="intro-band__character" aria-label="XOLOme 情绪角色形象">
-              <img
-                src="assets/images/xiaoqi-character-fixed.png"
-                alt="闭眼抱膝坐着的 XOLOme 情绪角色"
-                width="1323"
-                height="1804"
-                decoding="async"
-              />
+              <picture>
+                <source srcset="assets/images/xiaoqi-character.webp" type="image/webp" />
+                <img
+                  src="assets/images/xiaoqi-character-fixed.png"
+                  alt="闭眼抱膝坐着的 XOLOme 情绪角色"
+                  width="1323"
+                  height="1804"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
             </figure>
           </aside>
         </div>
@@ -161,7 +171,17 @@
 
           <div class="x1-stage__media" aria-label="XOLOme X1 产品展示">
             <figure class="tile tile--wide">
-              <img src="assets/images/x1-overview.png?v=2" alt="XOLOme X1 完整外观视图" width="1920" height="1200" />
+              <picture>
+                <source srcset="assets/images/x1-overview.webp" type="image/webp" />
+                <img
+                  src="assets/images/x1-overview.png?v=2"
+                  alt="XOLOme X1 完整外观视图"
+                  width="1920"
+                  height="1200"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
               <figcaption><span>01</span><span>完整外观视图</span><span>XOLOme X1</span></figcaption>
             </figure>
             <figure class="tile tile--module">
@@ -224,7 +244,7 @@
               loop
               playsinline
               preload="none"
-              aria-hidden="true"
+              aria-label="长安卫与 XOLOme 的 IP 合作视频"
             ></video>
             <div class="collab-stage__wash" aria-hidden="true"></div>
             <div class="collab-stage__caption">
@@ -379,6 +399,6 @@
       </div>
     </dialog>
 
-    <script src="js/app.js?v=20260719b"></script>
+    <script src="js/app.js?v=20260720g"></script>
   </body>
 </html>

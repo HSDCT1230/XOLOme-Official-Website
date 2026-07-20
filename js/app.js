@@ -7,6 +7,11 @@ const contactCloser = document.querySelector("[data-contact-close]");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let lastDialogTrigger = null;
 let scrollAnimFrame = 0;
+/** True while a click/hash scroll is animating — skip reveal resets to avoid flicker. */
+let scrollLock = false;
+/** Ignore cancel gestures briefly after a click-driven scroll starts. */
+let scrollCancelGraceUntil = 0;
+const entryTopTimers = [];
 
 if ("scrollRestoration" in history) {
   history.scrollRestoration = "manual";
@@ -25,15 +30,42 @@ function forceScrollTop() {
   document.body.scrollTop = 0;
 }
 
-// Always open on page 1 (hero). In-page hash clicks still work after load.
-forceScrollTop();
-
 function clearEntryHash() {
   if (!location.hash) {
     return;
   }
   history.replaceState(null, "", `${location.pathname}${location.search}`);
 }
+
+function cancelEntryTopTimers() {
+  while (entryTopTimers.length) {
+    window.clearTimeout(entryTopTimers.pop());
+  }
+}
+
+/** Keep the first paint pinned to the hero while the browser finishes layout. */
+let entryPinning = false;
+
+function pinEntryToHome() {
+  entryPinning = true;
+  cancelEntryTopTimers();
+  clearEntryHash();
+  forceScrollTop();
+
+  const pin = () => forceScrollTop();
+  window.requestAnimationFrame(() => window.requestAnimationFrame(pin));
+  entryTopTimers.push(window.setTimeout(pin, 0));
+  entryTopTimers.push(window.setTimeout(pin, 64));
+  entryTopTimers.push(
+    window.setTimeout(() => {
+      forceScrollTop();
+      entryPinning = false;
+    }, 180),
+  );
+}
+
+// Always open on the hero — strip leftover hashes from the previous visit.
+pinEntryToHome();
 
 function updateViewportHeight() {
   const viewportHeight = window.visualViewport?.height || window.innerHeight;
@@ -49,10 +81,32 @@ function updateBodyLock() {
     header.classList.contains("menu-open") || contactDialog.open ? "hidden" : "";
 }
 
-function closeMenu() {
+function setMenuToggleLabel(isOpen) {
+  const label = menuButton.querySelector(".sr-only");
+  if (label) {
+    label.textContent = isOpen ? "关闭导航" : "打开导航";
+  }
+  menuButton.setAttribute("aria-label", isOpen ? "关闭导航" : "打开导航");
+}
+
+function closeMenu({ restoreFocus = false } = {}) {
+  const wasOpen = header.classList.contains("menu-open");
   header.classList.remove("menu-open");
   menuButton.setAttribute("aria-expanded", "false");
+  setMenuToggleLabel(false);
   updateBodyLock();
+  if (restoreFocus && wasOpen) {
+    menuButton.focus();
+  }
+}
+
+function openMenu() {
+  header.classList.add("menu-open");
+  menuButton.setAttribute("aria-expanded", "true");
+  setMenuToggleLabel(true);
+  updateBodyLock();
+  const firstItem = nav.querySelector("a, button");
+  window.requestAnimationFrame(() => firstItem?.focus());
 }
 
 function openContact(trigger) {
@@ -66,7 +120,7 @@ function openContact(trigger) {
 
 function getAnchorOffset() {
   const scrollPaddingTop = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop);
-  const fallback = header.getBoundingClientRect().height - 28;
+  const fallback = header.getBoundingClientRect().height;
   return Number.isFinite(scrollPaddingTop) ? scrollPaddingTop : Math.max(0, fallback);
 }
 
@@ -79,10 +133,24 @@ function cancelScrollAnimation() {
     window.cancelAnimationFrame(scrollAnimFrame);
     scrollAnimFrame = 0;
   }
+  if (scrollLock) {
+    scrollLock = false;
+    resetOffscreenReveals();
+  }
+}
+
+function requestUserCancelScroll() {
+  if (performance.now() < scrollCancelGraceUntil) {
+    return;
+  }
+  cancelScrollAnimation();
 }
 
 function animateScrollTo(top, onComplete) {
-  cancelScrollAnimation();
+  if (scrollAnimFrame) {
+    window.cancelAnimationFrame(scrollAnimFrame);
+    scrollAnimFrame = 0;
+  }
 
   if (reduceMotion) {
     window.scrollTo({ top, behavior: "auto" });
@@ -97,7 +165,9 @@ function animateScrollTo(top, onComplete) {
     return;
   }
 
-  const duration = Math.min(1100, Math.max(560, Math.abs(delta) * 0.62));
+  scrollLock = true;
+  scrollCancelGraceUntil = performance.now() + 320;
+  const duration = Math.min(980, Math.max(480, Math.abs(delta) * 0.55));
   const startTime = performance.now();
 
   const step = (now) => {
@@ -109,6 +179,10 @@ function animateScrollTo(top, onComplete) {
     }
     scrollAnimFrame = 0;
     onComplete?.();
+    window.requestAnimationFrame(() => {
+      resetOffscreenReveals();
+      scrollLock = false;
+    });
   };
 
   scrollAnimFrame = window.requestAnimationFrame(step);
@@ -119,14 +193,37 @@ function revealWithin(root) {
     return;
   }
 
-  root.querySelectorAll("[data-reveal]:not(.is-revealed)").forEach((el) => {
-    el.classList.add("is-revealed");
-    el.classList.remove("is-reveal-warming");
+  root.querySelectorAll("[data-reveal]").forEach((el) => {
+    if (el.classList.contains("is-revealed")) {
+      return;
+    }
+    el.classList.add("is-reveal-warming");
+    markRevealed(el);
   });
 }
 
 function clearRevealWarming(el) {
   el.classList.remove("is-reveal-warming");
+}
+
+function resetReveal(el) {
+  el.style.transition = "none";
+  el.classList.remove("is-revealed", "is-reveal-warming");
+  void el.offsetWidth;
+  el.style.transition = "";
+}
+
+function isFullyOffscreen(el) {
+  const rect = el.getBoundingClientRect();
+  return rect.bottom < 0 || rect.top > window.innerHeight;
+}
+
+function resetOffscreenReveals() {
+  document.querySelectorAll("[data-reveal].is-revealed, [data-reveal].is-reveal-warming").forEach((el) => {
+    if (isFullyOffscreen(el)) {
+      resetReveal(el);
+    }
+  });
 }
 
 function markRevealed(el) {
@@ -148,10 +245,22 @@ function markRevealed(el) {
 }
 
 function scrollToHash(hash, options = {}) {
+  const updateHistory = options.updateHistory !== false;
+  const usePush = options.push !== false && updateHistory;
+
   if (!hash || HOME_HASHES.has(hash)) {
     forceScrollTop();
-    if (options.updateHistory !== false && hash && hash !== "#") {
-      history.replaceState(null, "", hash);
+    resetOffscreenReveals();
+    if (updateHistory) {
+      if (hash === "#top" || hash === "#hero") {
+        if (usePush) {
+          history.pushState(null, "", hash);
+        } else {
+          history.replaceState(null, "", hash);
+        }
+      } else {
+        history.replaceState(null, "", `${location.pathname}${location.search}`);
+      }
     }
     return;
   }
@@ -159,6 +268,7 @@ function scrollToHash(hash, options = {}) {
   const target = document.querySelector(hash);
   if (!target) {
     forceScrollTop();
+    resetOffscreenReveals();
     return;
   }
 
@@ -178,10 +288,19 @@ function scrollToHash(hash, options = {}) {
   const top = Math.max(0, Math.min(desiredTop, maxScroll));
   const section = target.closest("section") || target;
 
-  animateScrollTo(top, () => revealWithin(section));
+  if (options.instant || reduceMotion) {
+    window.scrollTo({ top, behavior: "auto" });
+    revealWithin(section);
+  } else {
+    animateScrollTo(top, () => revealWithin(section));
+  }
 
-  if (options.updateHistory !== false) {
-    history.replaceState(null, "", hash);
+  if (updateHistory) {
+    if (usePush) {
+      history.pushState(null, "", hash);
+    } else {
+      history.replaceState(null, "", hash);
+    }
   }
 }
 
@@ -220,7 +339,6 @@ function initSectionReveals() {
     return;
   }
 
-  // Reveal anything already on screen before enabling hide styles — avoids a flash.
   nodes.forEach((el) => {
     const rect = el.getBoundingClientRect();
     if (rect.top < window.innerHeight * 0.82 && rect.bottom > 40) {
@@ -232,6 +350,9 @@ function initSectionReveals() {
 
   const warmObserver = new IntersectionObserver(
     (entries) => {
+      if (scrollLock) {
+        return;
+      }
       entries.forEach((entry) => {
         if (!entry.isIntersecting || entry.target.classList.contains("is-revealed")) {
           return;
@@ -239,45 +360,61 @@ function initSectionReveals() {
         entry.target.classList.add("is-reveal-warming");
       });
     },
-    { rootMargin: "40% 0px 40% 0px", threshold: 0 },
+    { rootMargin: "28% 0px 28% 0px", threshold: 0 },
   );
 
   const observer = new IntersectionObserver(
-    (entries, obs) => {
+    (entries) => {
+      if (scrollLock) {
+        return;
+      }
       entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
+        const el = entry.target;
+        if (entry.isIntersecting) {
+          if (entry.intersectionRatio < 0.16 || el.classList.contains("is-revealed")) {
+            return;
+          }
+          el.classList.add("is-reveal-warming");
+          markRevealed(el);
           return;
         }
-        const el = entry.target;
-        el.classList.add("is-reveal-warming");
-        markRevealed(el);
-        warmObserver.unobserve(el);
-        obs.unobserve(el);
+
+        // Only reset when fully off-screen — avoids mid-viewport opacity flashes.
+        if (
+          (el.classList.contains("is-revealed") || el.classList.contains("is-reveal-warming")) &&
+          isFullyOffscreen(el)
+        ) {
+          resetReveal(el);
+        }
       });
     },
-    { threshold: 0.14, rootMargin: "0px 0px -10% 0px" },
+    { threshold: [0, 0.18], rootMargin: "0px 0px 0px 0px" },
   );
 
   nodes.forEach((el) => {
-    if (!el.classList.contains("is-revealed")) {
-      warmObserver.observe(el);
-      observer.observe(el);
-    }
+    warmObserver.observe(el);
+    observer.observe(el);
   });
 }
 
-window.addEventListener("wheel", cancelScrollAnimation, { passive: true });
-window.addEventListener("touchstart", cancelScrollAnimation, { passive: true });
+window.addEventListener("wheel", requestUserCancelScroll, { passive: true });
+window.addEventListener("touchmove", requestUserCancelScroll, { passive: true });
 window.addEventListener("keydown", (event) => {
   if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) {
-    cancelScrollAnimation();
+    requestUserCancelScroll();
+  }
+  if (event.key === "Escape" && header.classList.contains("menu-open")) {
+    event.preventDefault();
+    closeMenu({ restoreFocus: true });
   }
 });
 
 menuButton.addEventListener("click", () => {
-  const isOpen = header.classList.toggle("menu-open");
-  menuButton.setAttribute("aria-expanded", String(isOpen));
-  updateBodyLock();
+  if (header.classList.contains("menu-open")) {
+    closeMenu({ restoreFocus: true });
+  } else {
+    openMenu();
+  }
 });
 
 document.addEventListener("click", (event) => {
@@ -294,15 +431,31 @@ document.querySelectorAll('a[href^="#"]').forEach((link) =>
     }
 
     event.preventDefault();
+    entryPinning = false;
+    cancelEntryTopTimers();
     closeMenu();
     if (contactDialog.open) {
       contactDialog.close();
     }
-    window.requestAnimationFrame(() => scrollToHash(hash));
+    window.requestAnimationFrame(() => scrollToHash(hash, { push: true }));
   }),
 );
 
-window.addEventListener("scroll", updateHeader, { passive: true });
+window.addEventListener("popstate", () => {
+  entryPinning = false;
+  cancelEntryTopTimers();
+  const hash = getLocationHash() || "#top";
+  scrollToHash(hash, { updateHistory: false, instant: Math.abs(window.scrollY) < 8 });
+});
+
+window.addEventListener("scroll", () => {
+  if (entryPinning) {
+    forceScrollTop();
+    return;
+  }
+  updateHeader();
+}, { passive: true });
+
 window.addEventListener("resize", () => {
   updateViewportHeight();
   if (window.innerWidth > 960) {
@@ -313,26 +466,15 @@ window.visualViewport?.addEventListener("resize", updateViewportHeight, { passiv
 window.addEventListener("orientationchange", updateViewportHeight, { passive: true });
 updateViewportHeight();
 updateHeader();
+setMenuToggleLabel(false);
 
 function restoreScrollOnEntry() {
-  // Fresh open / refresh always lands on the first page, even if the URL still
-  // carries a leftover section hash from the previous visit.
-  clearEntryHash();
-  forceScrollTop();
-  window.requestAnimationFrame(() => window.requestAnimationFrame(forceScrollTop));
-  window.setTimeout(forceScrollTop, 0);
-  window.setTimeout(forceScrollTop, 120);
-  window.setTimeout(forceScrollTop, 360);
+  pinEntryToHome();
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  clearEntryHash();
-  forceScrollTop();
-});
-
+window.addEventListener("DOMContentLoaded", restoreScrollOnEntry);
 window.addEventListener("load", restoreScrollOnEntry);
 
-// bfcache restore skips `load`; re-apply the same top rule.
 window.addEventListener("pageshow", (event) => {
   if (event.persisted) {
     restoreScrollOnEntry();
@@ -352,10 +494,6 @@ contactDialog.addEventListener("close", () => {
     lastDialogTrigger.focus();
   }
   lastDialogTrigger = null;
-});
-contactDialog.addEventListener("cancel", (event) => {
-  event.preventDefault();
-  contactDialog.close();
 });
 contactDialog.addEventListener("click", (event) => {
   if (event.target === contactDialog) {
