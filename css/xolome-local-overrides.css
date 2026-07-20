@@ -818,6 +818,7 @@ header.masthead.menu-open .nav-toggle {
   opacity: 0.75;
   font-weight: 500;
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .section-guide__icon {
@@ -856,11 +857,21 @@ header.masthead.menu-open .nav-toggle {
   transform: translateX(-50%);
 }
 
-/* Overview cue stays in normal flow so it never covers copy/character. */
+/* Overview stacks the cue under the card — never beside it in a row flex. */
+.intro-band,
+#overview.intro-band {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
 .intro-band > .section-guide {
   position: static;
   left: auto;
   bottom: auto;
+  align-self: center;
+  width: max-content;
+  max-width: 100%;
   margin: clamp(1.25rem, 3vw, 2rem) auto clamp(1.5rem, 3vw, 2.25rem);
   transform: none;
 }
