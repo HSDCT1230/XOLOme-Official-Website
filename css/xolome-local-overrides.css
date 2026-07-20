@@ -994,6 +994,36 @@ header.masthead.menu-open .nav-toggle {
   }
 }
 
+/* Hero LCP poster paints immediately; video fades over it once deferred load plays. */
+.hero__poster {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 56% center;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.hero__poster.is-hidden {
+  opacity: 0;
+}
+
+.hero__media {
+  z-index: 1;
+}
+
+.hero__wash {
+  z-index: 2;
+}
+
+.hero__content,
+.hero .section-guide--float {
+  z-index: 3;
+}
+
 /* Soften hero video wash: keep left/bottom text contrast, let the product
    read clearer through the center and right of the frame. */
 .hero__wash {
@@ -1035,7 +1065,9 @@ header.masthead.menu-open .nav-toggle {
 }
 
 .intro-band__character picture,
-.x1-stage__media .tile picture {
+.x1-stage__media .tile picture,
+.about-stage__product picture,
+.contact-band__media picture {
   display: contents;
 }
 

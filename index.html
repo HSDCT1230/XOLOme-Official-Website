@@ -29,9 +29,9 @@
     <title>XOLOme | 情绪陪伴设备</title>
     <link rel="canonical" href="https://xolome-website-test.pages.dev/" />
     <link rel="icon" type="image/png" href="assets/images/logo-white.png" />
-    <link rel="preload" href="assets/images/hero-poster.webp" as="image" type="image/webp" />
-    <link rel="stylesheet" href="css/site.min.css?v=20260720h" />
-    <link rel="stylesheet" href="css/xolome-local-overrides.css?v=20260720h" />
+    <link rel="preload" href="assets/images/hero-poster.webp" as="image" type="image/webp" fetchpriority="high" />
+    <link rel="stylesheet" href="css/site.min.css?v=20260721a" />
+    <link rel="stylesheet" href="css/xolome-local-overrides.css?v=20260721a" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -47,7 +47,15 @@
     <header class="masthead" data-header>
       <div class="shell masthead__inner">
         <a class="brand" href="#top" aria-label="XOLOme 首页">
-          <img class="brand__logo" src="assets/images/logo-white.png" alt="XOLOme" width="720" height="240" />
+          <img
+            class="brand__logo"
+            src="assets/images/logo-white.png"
+            alt="XOLOme"
+            width="720"
+            height="240"
+            decoding="async"
+            fetchpriority="high"
+          />
         </a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航" data-menu-button>
           <span class="sr-only">打开导航</span>
@@ -69,9 +77,20 @@
     <main id="top">
       <section class="hero" id="hero" aria-labelledby="hero-title">
         <div class="shell hero__stage">
+          <img
+            class="hero__poster"
+            src="assets/images/hero-poster.webp"
+            alt=""
+            width="1920"
+            height="1080"
+            decoding="async"
+            fetchpriority="high"
+            aria-hidden="true"
+          />
           <video
             class="hero__media"
             data-lazy-video
+            data-lazy-video-defer
             data-src="assets/video/hero-product.mp4"
             poster="assets/images/hero-poster.webp"
             autoplay
@@ -128,13 +147,18 @@
             <p class="intro-band__note">YOUR KINDRED<br />SPIRIT</p>
             <figure class="intro-band__character" aria-label="XOLOme 情绪角色形象">
               <picture>
-                <source srcset="assets/images/xiaoqi-character.webp" type="image/webp" />
+                <source
+                  data-lazy-srcset="assets/images/xiaoqi-character-640.webp"
+                  media="(max-width: 760px)"
+                  type="image/webp"
+                />
+                <source data-lazy-srcset="assets/images/xiaoqi-character.webp" type="image/webp" />
                 <img
-                  src="assets/images/xiaoqi-character-fixed.png"
+                  src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                  data-lazy-src="assets/images/xiaoqi-character-fixed.png"
                   alt="闭眼抱膝坐着的 XOLOme 情绪角色"
                   width="1323"
                   height="1804"
-                  loading="lazy"
                   decoding="async"
                 />
               </picture>
@@ -172,24 +196,38 @@
           <div class="x1-stage__media" aria-label="XOLOme X1 产品展示">
             <figure class="tile tile--wide">
               <picture>
-                <source srcset="assets/images/x1-overview.webp" type="image/webp" />
+                <source data-lazy-srcset="assets/images/x1-overview.webp" type="image/webp" />
                 <img
-                  src="assets/images/x1-overview.png?v=2"
+                  src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                  data-lazy-src="assets/images/x1-overview.png?v=2"
                   alt="XOLOme X1 完整外观视图"
                   width="1920"
                   height="1200"
-                  loading="lazy"
                   decoding="async"
                 />
               </picture>
               <figcaption><span>01</span><span>完整外观视图</span><span>XOLOme X1</span></figcaption>
             </figure>
             <figure class="tile tile--module">
-              <img src="assets/images/x1-modules.webp" alt="XOLOme X1 主机、支架与遥控器" width="1920" height="1200" loading="lazy" />
+              <img
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                data-lazy-src="assets/images/x1-modules.webp"
+                alt="XOLOme X1 主机、支架与遥控器"
+                width="1920"
+                height="1200"
+                decoding="async"
+              />
               <figcaption><span>02</span><span>X1 主机、支架与遥控器</span></figcaption>
             </figure>
             <figure class="tile tile--diy">
-              <img src="assets/images/x1-diy.webp" alt="XOLOme X1 的多种 DIY 功能" width="1920" height="1200" loading="lazy" />
+              <img
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                data-lazy-src="assets/images/x1-diy.webp"
+                alt="XOLOme X1 的多种 DIY 功能"
+                width="1920"
+                height="1200"
+                decoding="async"
+              />
               <figcaption><span>03</span><span>多种 DIY 功能</span></figcaption>
             </figure>
           </div>
@@ -257,31 +295,34 @@
         <div class="shell expo-gallery" aria-label="XOLOme 品牌首发展会现场">
           <figure class="expo-gallery__item expo-gallery__item--lead">
             <img
-              src="assets/images/expo-booth.webp"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+              data-lazy-src="assets/images/expo-booth.webp"
               alt="XOLOme 品牌首发展位全景，展示全息设备、联名产品与互动空间"
               width="1620"
               height="1080"
-              loading="lazy"
+              decoding="async"
             />
             <figcaption><span>展位</span><strong>设备、IP 与互动场景在同一空间展开</strong></figcaption>
           </figure>
           <figure class="expo-gallery__item">
             <img
-              src="assets/images/expo-interaction.webp"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+              data-lazy-src="assets/images/expo-interaction.webp"
               alt="工作人员在展位演示 XOLOme 全息设备的互动功能"
               width="1620"
               height="1080"
-              loading="lazy"
+              decoding="async"
             />
             <figcaption><span>互动</span><strong>从观看，到伸手回应</strong></figcaption>
           </figure>
           <figure class="expo-gallery__item">
             <img
-              src="assets/images/expo-product-lineup.webp"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+              data-lazy-src="assets/images/expo-product-lineup.webp"
               alt="XOLOme X1 长安卫联名设备与角色模型产品阵列"
               width="1920"
               height="1279"
-              loading="lazy"
+              decoding="async"
             />
             <figcaption><span>产品</span><strong>长安卫联名设备与收藏体系</strong></figcaption>
           </figure>
@@ -322,13 +363,17 @@
               <p>Born for emotion.<br />Made for life.</p>
             </div>
             <figure class="about-stage__product" aria-label="XOLOme X1 主机">
-              <img
-                src="assets/images/x1-modules-cutout.png?v=4"
-                alt="XOLOme X1 主机正面展示"
-                width="1920"
-                height="1200"
-                loading="lazy"
-              />
+              <picture>
+                <source data-lazy-srcset="assets/images/x1-modules-cutout.webp" type="image/webp" />
+                <img
+                  src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                  data-lazy-src="assets/images/x1-modules-cutout.png?v=4"
+                  alt="XOLOme X1 主机正面展示"
+                  width="1920"
+                  height="1200"
+                  decoding="async"
+                />
+              </picture>
             </figure>
           </aside>
         </div>
@@ -351,13 +396,17 @@
           </div>
           <div class="contact-band__aside">
             <figure class="contact-band__media">
-              <img
-                src="assets/images/x1-contact-devices-cutout.png?v=1"
-                alt="XOLOme X1"
-                width="1331"
-                height="802"
-                loading="lazy"
-              />
+              <picture>
+                <source data-lazy-srcset="assets/images/x1-contact-devices-cutout.webp" type="image/webp" />
+                <img
+                  src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                  data-lazy-src="assets/images/x1-contact-devices-cutout.png?v=1"
+                  alt="XOLOme X1"
+                  width="1331"
+                  height="802"
+                  decoding="async"
+                />
+              </picture>
             </figure>
             <div class="contact-band__action">
               <button class="button button--primary button--large" type="button" data-contact-open>
@@ -399,6 +448,6 @@
       </div>
     </dialog>
 
-    <script src="js/app.js?v=20260720g"></script>
+    <script src="js/app.js?v=20260721a"></script>
   </body>
 </html>

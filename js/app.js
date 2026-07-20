@@ -501,40 +501,143 @@ contactDialog.addEventListener("click", (event) => {
   }
 });
 
-const lazyVideos = document.querySelectorAll("[data-lazy-video]");
-if ("IntersectionObserver" in window && lazyVideos.length > 0) {
+function hydrateLazyImage(el) {
+  if (el.dataset.lazyLoaded === "1") {
+    return;
+  }
+
+  if (el.dataset.lazySrcset) {
+    el.srcset = el.dataset.lazySrcset;
+    delete el.dataset.lazySrcset;
+  }
+
+  if (el.dataset.lazySrc) {
+    el.src = el.dataset.lazySrc;
+    delete el.dataset.lazySrc;
+  }
+
+  el.dataset.lazyLoaded = "1";
+}
+
+function initLazyImages() {
+  const nodes = document.querySelectorAll("img[data-lazy-src], img[data-lazy-srcset]");
+  if (!nodes.length) {
+    return;
+  }
+
+  const reveal = (el) => {
+    const picture = el.closest("picture");
+    if (picture) {
+      picture.querySelectorAll("[data-lazy-src], [data-lazy-srcset]").forEach(hydrateLazyImage);
+      return;
+    }
+    hydrateLazyImage(el);
+  };
+
+  if (!("IntersectionObserver" in window)) {
+    nodes.forEach(reveal);
+    return;
+  }
+
+  // Keep first paint free: only fetch when nearly on screen (native lazy is too eager on mobile).
   const observer = new IntersectionObserver(
     (entries, obs) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) {
           return;
         }
-
-        const video = entry.target;
-        const src = video.dataset.src;
-        if (src && !video.src) {
-          video.src = src;
-          video.load();
-          if (video.autoplay) {
-            video.play().catch(() => {});
-          }
-        }
-        obs.unobserve(video);
+        reveal(entry.target);
+        obs.unobserve(entry.target);
       });
     },
-    { threshold: 0.35, rootMargin: "200px 0px" },
+    { rootMargin: "80px 0px", threshold: 0.01 },
   );
 
-  lazyVideos.forEach((video) => observer.observe(video));
-} else {
-  lazyVideos.forEach((video) => {
-    const src = video.dataset.src;
-    if (src && !video.src) {
-      video.src = src;
-      video.load();
+  nodes.forEach((el) => observer.observe(el));
+}
+
+function loadLazyVideo(video) {
+  const src = video.dataset.src;
+  if (!src || video.src) {
+    return;
+  }
+  video.src = src;
+  video.load();
+  if (video.autoplay && !reduceMotion) {
+    video.play().catch(() => {});
+  }
+
+  const poster = video.parentElement?.querySelector(".hero__poster");
+  if (poster) {
+    const hidePoster = () => poster.classList.add("is-hidden");
+    video.addEventListener("playing", hidePoster, { once: true });
+    window.setTimeout(hidePoster, 2400);
+  }
+}
+
+function initLazyVideos() {
+  const videos = Array.from(document.querySelectorAll("[data-lazy-video]"));
+  if (!videos.length) {
+    return;
+  }
+
+  const deferred = videos.filter((video) => video.hasAttribute("data-lazy-video-defer"));
+  const immediate = videos.filter((video) => !video.hasAttribute("data-lazy-video-defer"));
+
+  const observeVideos = (list, rootMargin) => {
+    if (!list.length) {
+      return;
+    }
+    if (!("IntersectionObserver" in window)) {
+      list.forEach(loadLazyVideo);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+          loadLazyVideo(entry.target);
+          obs.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.2, rootMargin },
+    );
+    list.forEach((video) => observer.observe(video));
+  };
+
+  // Below-fold videos: modest lookahead only.
+  observeVideos(immediate, "120px 0px");
+
+  // Hero video: wait for idle / first gesture so poster + logo win the first network slots.
+  deferred.forEach((video) => {
+    let armed = false;
+    const arm = () => {
+      if (armed) {
+        return;
+      }
+      armed = true;
+      window.removeEventListener("scroll", arm);
+      window.removeEventListener("touchstart", arm);
+      window.removeEventListener("pointerdown", arm);
+      loadLazyVideo(video);
+    };
+
+    window.addEventListener("scroll", arm, { passive: true, once: true });
+    window.addEventListener("touchstart", arm, { passive: true, once: true });
+    window.addEventListener("pointerdown", arm, { passive: true, once: true });
+
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(arm, { timeout: 2800 });
+    } else {
+      window.setTimeout(arm, 2200);
     }
   });
 }
+
+initLazyImages();
+initLazyVideos();
 
 if (reduceMotion) {
   document.querySelectorAll("video").forEach((video) => {
