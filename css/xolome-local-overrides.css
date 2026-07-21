@@ -1,9 +1,20 @@
 /* Local refinements for the G:\code working copy. */
 
+/* XOLOme VI — 03 色彩系统：XOLO绿 #6ec73b (RGB 110 199 59 / Pantone 2286).
+   Soft is a UI hover tint derived from the brand green (not a separate VI swatch). */
+:root {
+  --xolo-green: #6ec73b;
+  --xolo-green-rgb: 110, 199, 59;
+  --xolo-green-soft: #8de85d;
+  --xolo-green-ink: #071006;
+  --xo-green: #6ec73b;
+  --xo-green-soft: #8de85d;
+}
+
 .button--primary {
-  border-color: rgba(53, 75, 45, 0.38);
-  color: #10170f;
-  background: #7fa66b;
+  border-color: rgba(var(--xolo-green-rgb), 0.42);
+  color: var(--xolo-green-ink);
+  background: var(--xolo-green);
   box-shadow: 0 0.35rem 0.9rem rgba(0, 0, 0, 0.12);
 }
 
@@ -14,16 +25,16 @@
 }
 
 .button--primary:hover {
-  border-color: rgba(53, 75, 45, 0.48);
-  background: #769c64;
+  border-color: rgba(var(--xolo-green-rgb), 0.55);
+  background: var(--xolo-green-soft);
   box-shadow: 0 0.45rem 1rem rgba(0, 0, 0, 0.14);
   transform: translateY(-1px);
 }
 
 .button--ghost:hover {
-  border-color: rgba(127, 166, 107, 0.58);
-  color: #10170f;
-  background: #7fa66b;
+  border-color: rgba(var(--xolo-green-rgb), 0.58);
+  color: var(--xolo-green-ink);
+  background: var(--xolo-green);
 }
 
 /* Masthead「联系我们」: keep button chrome; arrow is typographic, not a badge. */
@@ -69,7 +80,7 @@ header.masthead .nav .button.button--ghost.button--nav:active span[aria-hidden="
   gap: 0.9rem;
   border-color: var(--xolo-green);
   border-radius: 999px;
-  color: #071006;
+  color: var(--xolo-green-ink);
   background: var(--xolo-green);
   box-shadow: none;
   -webkit-backdrop-filter: blur(8px);
@@ -89,16 +100,16 @@ header.masthead .nav .button.button--ghost.button--nav:active span[aria-hidden="
 .contact-band .button--primary.button--large:hover,
 .contact-band .button--primary.button--large:focus-visible,
 .contact-band .button--primary.button--large:active {
-  border-color: rgba(110, 199, 59, 0.58);
+  border-color: rgba(var(--xolo-green-rgb), 0.58);
   color: var(--xolo-green-soft);
-  background: rgba(110, 199, 59, 0.08);
+  background: rgba(var(--xolo-green-rgb), 0.08);
   box-shadow: none;
 }
 
 .contact-band .button--primary.button--large:hover span,
 .contact-band .button--primary.button--large:focus-visible span,
 .contact-band .button--primary.button--large:active span {
-  color: #071006;
+  color: var(--xolo-green-ink);
   background: var(--xolo-green);
 }
 
@@ -623,12 +634,12 @@ header.masthead::after {
   content: none;
 }
 
-/* Mobile menu toggle — brand green so it reads clearly on the dark veil. */
+/* Mobile menu toggle — VI brand green so it reads clearly on the dark veil. */
 header.masthead .nav-toggle {
-  color: #071006;
-  border-color: var(--xolo-green, #6ec73b);
-  background: var(--xolo-green, #6ec73b);
-  box-shadow: 0 0 0 3px rgba(110, 199, 59, 0.28);
+  color: var(--xolo-green-ink);
+  border-color: var(--xolo-green);
+  background: var(--xolo-green);
+  box-shadow: 0 0 0 3px rgba(var(--xolo-green-rgb), 0.28);
 }
 
 header.masthead .nav-toggle > span:not(.sr-only) {
@@ -636,17 +647,17 @@ header.masthead .nav-toggle > span:not(.sr-only) {
 }
 
 header.masthead.menu-open .nav-toggle {
-  color: #071006;
-  border-color: var(--xolo-green-soft, #8de85d);
-  background: var(--xolo-green-soft, #8de85d);
-  box-shadow: 0 0 0 3px rgba(141, 232, 93, 0.35);
+  color: var(--xolo-green-ink);
+  border-color: var(--xolo-green-soft);
+  background: var(--xolo-green-soft);
+  box-shadow: 0 0 0 3px rgba(var(--xolo-green-rgb), 0.35);
 }
 
 @media (hover: hover) and (pointer: fine) {
   header.masthead .nav-toggle:hover {
-    color: #071006;
-    border-color: var(--xolo-green-soft, #8de85d);
-    background: var(--xolo-green-soft, #8de85d);
+    color: var(--xolo-green-ink);
+    border-color: var(--xolo-green-soft);
+    background: var(--xolo-green-soft);
   }
 }
 
@@ -675,10 +686,11 @@ header.masthead.menu-open .nav-toggle {
   }
 }
 
-/* Stronger small-label contrast on light editorial bands. */
+/* Kickers / marks on light bands — VI XOLO绿 (replaces off-spec #5fbf2d / #2f7a18). */
 .intro-band .kicker,
-.about-stage__copy > .kicker {
-  color: #2f7a18;
+.about-stage__copy > .kicker,
+.about-stage__mark {
+  color: var(--xolo-green);
 }
 .collab-band .section-head .kicker,
 .about-stage__copy > .kicker {
@@ -736,7 +748,7 @@ header.masthead.menu-open .nav-toggle {
   }
 }
 
-/* Reuse the modules artwork, framing the central X1 (device + side module). */
+/* About gallery — lifestyle desk scenes (source 768×1024 → 3:4). */
 .about-stage__aside {
   display: flex;
   flex-direction: column;
@@ -745,36 +757,231 @@ header.masthead.menu-open .nav-toggle {
   min-width: 0;
 }
 
-.about-stage__product {
+.about-stage__gallery {
   position: relative;
-  /* Wider frame so the ribbed right face + green side module fit without clipping. */
-  width: min(100%, clamp(20rem, 36vw, 34rem));
-  aspect-ratio: 4 / 5;
+  width: min(100%, clamp(20rem, 34vw, 30rem));
   margin: 0 0 0 auto;
-  overflow: hidden;
-  background: none;
 }
 
-/* Cover zoom on the 3-object strip: frame the center X1 (character + ribs +
-   right green module). object-position ~48% crops the left sibling; mild
-   translate keeps the main unit centered without empty left / edge peek. */
-.about-stage__product img {
+.about-stage__gallery-frame {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #ddd;
+  touch-action: pan-y;
+  cursor: default;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55) inset,
+    0 1.1rem 2.4rem rgba(4, 3, 3, 0.08);
+}
+
+.about-stage__gallery-frame::after {
+  content: "";
   position: absolute;
-  inset: 0;
+  inset: auto 0 0;
+  z-index: 1;
+  height: 28%;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 0%, rgba(4, 3, 3, 0.34) 100%);
+}
+
+.about-stage__gallery-track {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.82s cubic-bezier(0.22, 0.82, 0.2, 1);
+  will-change: transform;
+}
+
+.about-stage__gallery-slide {
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.about-stage__gallery-slide picture,
+.about-stage__gallery-slide img {
+  display: block;
   width: 100%;
   height: 100%;
-  max-width: none;
+}
+
+.about-stage__gallery-slide img {
   object-fit: cover;
-  object-position: 48% 48%;
-  transform: scale(1.24) translateX(-3%);
-  transform-origin: 42% 50%;
-  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  object-position: center;
+  transform: scale(1.045);
+  transform-origin: center;
+  transition: transform 0.95s cubic-bezier(0.22, 0.82, 0.2, 1);
+}
+
+.about-stage__gallery-slide.is-active img {
+  transform: scale(1);
+}
+
+.about-stage__gallery.is-dragging .about-stage__gallery-slide img {
+  transition: none;
+}
+
+.about-stage__gallery-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  width: 2.55rem;
+  height: 2.55rem;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  color: #10140f;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 0.35rem 1rem rgba(4, 3, 3, 0.16);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  cursor: pointer;
+  transform: translateY(-50%) scale(0.94);
+  transition:
+    opacity 0.28s ease,
+    background 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    transform 0.28s cubic-bezier(0.22, 0.82, 0.2, 1),
+    box-shadow 0.22s ease;
+}
+
+.about-stage__gallery-nav:hover {
+  color: var(--xolo-green-ink, #071006);
+  border-color: rgba(110, 199, 59, 0.55);
+  background: var(--xolo-green, #6ec73b);
+  box-shadow: 0 0.4rem 1.15rem rgba(110, 199, 59, 0.28);
+  transform: translateY(-50%) scale(1);
+}
+
+.about-stage__gallery-nav:active {
+  transform: translateY(-50%) scale(0.96);
+}
+
+.about-stage__gallery-nav svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.about-stage__gallery-nav--prev {
+  left: 0.75rem;
+}
+
+.about-stage__gallery-nav--next {
+  right: 0.75rem;
+}
+
+.about-stage__gallery-frame:hover .about-stage__gallery-nav,
+.about-stage__gallery-nav:focus-visible {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.about-stage__gallery-nav:focus-visible {
+  outline: 2px solid var(--xolo-green, #6ec73b);
+  outline-offset: 3px;
+}
+
+.about-stage__gallery-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 0.85rem;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.35rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(4, 3, 3, 0.28);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transform: translateX(-50%);
+}
+
+.about-stage__gallery-dot {
+  width: 0.38rem;
+  height: 0.38rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+  cursor: pointer;
+  transition:
+    background 0.28s ease,
+    transform 0.28s cubic-bezier(0.22, 0.82, 0.2, 1),
+    width 0.28s cubic-bezier(0.22, 0.82, 0.2, 1);
+}
+
+.about-stage__gallery-dot.is-active {
+  width: 1.2rem;
+  background: var(--xolo-green, #6ec73b);
+  transform: none;
+}
+
+.about-stage__gallery-dot:hover {
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.about-stage__gallery-dot.is-active:hover {
+  background: var(--xolo-green-soft, #8de85d);
+}
+
+.about-stage__gallery-dot:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 @media (min-width: 761px) and (max-width: 960px) {
-  .about-stage__product {
-    width: min(86vw, 28rem);
+  .about-stage__gallery {
+    width: min(86vw, 26rem);
     margin-inline: auto;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .about-stage__gallery-nav {
+    width: 2.4rem;
+    height: 2.4rem;
+    opacity: 0.92;
+    transform: translateY(-50%) scale(1);
+  }
+
+  .about-stage__gallery-nav svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  .about-stage__gallery-frame:active {
+    cursor: grabbing;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-stage__gallery-track,
+  .about-stage__gallery-slide img,
+  .about-stage__gallery-nav,
+  .about-stage__gallery-dot {
+    transition: none;
+  }
+
+  .about-stage__gallery-slide img,
+  .about-stage__gallery-slide.is-active img {
+    transform: none;
   }
 }
 
@@ -880,7 +1087,7 @@ header.masthead.menu-open .nav-toggle {
   transform: translateY(3px);
 }
 
-/* 03 / IP COLLECTIVE — same vertical cue as overview / X1 (line → label → chevron). */
+/* 04 / IP COLLECTIVE — same vertical cue as overview / X1 (line → label → chevron). */
 .collab-band > .section-guide {
   position: static;
   flex-direction: column;
@@ -893,7 +1100,7 @@ header.masthead.menu-open .nav-toggle {
   height: clamp(1.5rem, 3vw, 2.25rem);
 }
 
-/* COMPANY — same vertical cue as other bands. */
+/* 03 / COMPANY — same vertical cue as other bands. */
 #about > .section-guide {
   position: relative;
   top: 0;
@@ -1046,7 +1253,7 @@ header.masthead.menu-open .nav-toggle {
 /* Site-wide editorial media zoom. Functional images such as logos and the
    contact QR are intentionally excluded. */
 .expo-gallery__item,
-.about-stage__product,
+.about-stage__gallery-frame,
 .collab-stage__media,
 .hero {
   overflow: hidden;
@@ -1066,7 +1273,6 @@ header.masthead.menu-open .nav-toggle {
 
 .intro-band__character picture,
 .x1-stage__media .tile picture,
-.about-stage__product picture,
 .contact-band__media picture {
   display: contents;
 }
@@ -1091,10 +1297,6 @@ header.masthead.menu-open .nav-toggle {
     transform: scale(1.1);
   }
 
-  .about-stage__product:hover img {
-    transform: scale(1.34) translateX(-3%);
-  }
-
   .collab-stage__media:hover .collab-stage__video {
     transform: scale(1.1);
   }
@@ -1107,7 +1309,6 @@ header.masthead.menu-open .nav-toggle {
 @media (prefers-reduced-motion: reduce) {
   .intro-band__character img,
   .expo-gallery__item img,
-  .about-stage__product img,
   .contact-band__media img,
   .hero__media,
   .collab-stage__video {
@@ -1215,8 +1416,8 @@ header.masthead.menu-open .nav-toggle {
     font-size: 0.68rem;
   }
 
-  .about-stage__product {
-    width: min(88vw, 24rem);
+  .about-stage__gallery {
+    width: min(88vw, 22rem);
     margin: 0 auto;
   }
 
@@ -1275,24 +1476,24 @@ header.masthead.menu-open .nav-toggle {
 
   header.masthead .nav .button--nav {
     justify-content: space-between;
-    border-color: var(--xolo-green, #6ec73b);
-    color: #071006;
-    background: var(--xolo-green, #6ec73b);
+    border-color: var(--xolo-green);
+    color: var(--xolo-green-ink);
+    background: var(--xolo-green);
     border-radius: 0.75rem;
     box-shadow: none;
   }
 
   header.masthead .nav .button--nav span[aria-hidden="true"] {
-    color: #071006;
+    color: var(--xolo-green-ink);
     opacity: 0.85;
   }
 
   header.masthead .nav .button--nav:hover,
   header.masthead .nav .button--nav:focus-visible,
   header.masthead .nav .button--nav:active {
-    border-color: var(--xolo-green-soft, #8de85d);
-    color: #071006;
-    background: var(--xolo-green-soft, #8de85d);
+    border-color: var(--xolo-green-soft);
+    color: var(--xolo-green-ink);
+    background: var(--xolo-green-soft);
   }
 }
 

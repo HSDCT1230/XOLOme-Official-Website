@@ -638,6 +638,7 @@ function initLazyVideos() {
 
 initLazyImages();
 initLazyVideos();
+initAboutGallery();
 
 if (reduceMotion) {
   document.querySelectorAll("video").forEach((video) => {
@@ -647,3 +648,216 @@ if (reduceMotion) {
 }
 
 initSectionReveals();
+
+function initAboutGallery() {
+  const root = document.querySelector("[data-about-gallery]");
+  if (!root) {
+    return;
+  }
+
+  const track = root.querySelector("[data-about-gallery-track]");
+  const frame = root.querySelector(".about-stage__gallery-frame");
+  const slides = Array.from(root.querySelectorAll("[data-about-gallery-slide]"));
+  const prevBtn = root.querySelector("[data-about-gallery-prev]");
+  const nextBtn = root.querySelector("[data-about-gallery-next]");
+  const dotsWrap = root.querySelector("[data-about-gallery-dots]");
+  if (!track || !frame || !dotsWrap || slides.length < 2) {
+    return;
+  }
+
+  const count = slides.length;
+  let index = 0;
+  let autoTimer = 0;
+  let paused = false;
+  let pointerId = null;
+  let dragStartX = 0;
+  let dragDelta = 0;
+  let dragging = false;
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  const hydrateGallery = () => {
+    root.querySelectorAll("img[data-lazy-src], source[data-lazy-srcset]").forEach((el) => {
+      hydrateLazyImage(el);
+    });
+  };
+
+  if ("IntersectionObserver" in window) {
+    const warm = new IntersectionObserver(
+      (entries, obs) => {
+        if (!entries.some((entry) => entry.isIntersecting)) {
+          return;
+        }
+        hydrateGallery();
+        obs.disconnect();
+      },
+      { rootMargin: "160px 0px", threshold: 0.01 },
+    );
+    warm.observe(root);
+  } else {
+    hydrateGallery();
+  }
+
+  dotsWrap.innerHTML = slides
+    .map(
+      (_, i) =>
+        `<button type="button" class="about-stage__gallery-dot${i === 0 ? " is-active" : ""}" data-about-gallery-dot="${i}" role="tab" aria-label="场景 ${i + 1}" aria-selected="${i === 0 ? "true" : "false"}"></button>`,
+    )
+    .join("");
+
+  const dots = Array.from(dotsWrap.querySelectorAll("[data-about-gallery-dot]"));
+
+  const render = () => {
+    track.style.transform = `translate3d(${-index * 100}%, 0, 0)`;
+    slides.forEach((slide, i) => {
+      slide.classList.toggle("is-active", i === index);
+      slide.setAttribute("aria-hidden", i === index ? "false" : "true");
+    });
+    dots.forEach((dot, i) => {
+      const active = i === index;
+      dot.classList.toggle("is-active", active);
+      dot.setAttribute("aria-selected", active ? "true" : "false");
+    });
+  };
+
+  const goTo = (next, { restart = true } = {}) => {
+    index = ((next % count) + count) % count;
+    render();
+    if (restart) {
+      restartAuto();
+    }
+  };
+
+  const stopAuto = () => {
+    if (autoTimer) {
+      window.clearInterval(autoTimer);
+      autoTimer = 0;
+    }
+  };
+
+  const restartAuto = () => {
+    stopAuto();
+    if (reduceMotion || paused) {
+      return;
+    }
+    autoTimer = window.setInterval(() => {
+      goTo(index + 1, { restart: false });
+    }, 5600);
+  };
+
+  prevBtn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    goTo(index - 1);
+  });
+  nextBtn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    goTo(index + 1);
+  });
+
+  dots.forEach((dot) => {
+    dot.addEventListener("click", () => {
+      goTo(Number(dot.dataset.aboutGalleryDot) || 0);
+    });
+  });
+
+  const onPointerDown = (event) => {
+    // Swipe on touch / coarse pointers only; desktop uses arrows + dots.
+    if (finePointer && event.pointerType === "mouse") {
+      return;
+    }
+    if (event.pointerType === "mouse" && event.button !== 0) {
+      return;
+    }
+    if (event.target.closest(".about-stage__gallery-nav, .about-stage__gallery-dot")) {
+      return;
+    }
+    pointerId = event.pointerId;
+    dragStartX = event.clientX;
+    dragDelta = 0;
+    dragging = true;
+    paused = true;
+    stopAuto();
+    root.classList.add("is-dragging");
+    track.style.transition = "none";
+    frame.setPointerCapture?.(pointerId);
+  };
+
+  const onPointerMove = (event) => {
+    if (!dragging || event.pointerId !== pointerId) {
+      return;
+    }
+    dragDelta = event.clientX - dragStartX;
+    const width = frame.getBoundingClientRect().width || 1;
+    const offset = (-index * 100) + (dragDelta / width) * 100;
+    track.style.transform = `translate3d(${offset}%, 0, 0)`;
+  };
+
+  const restoreTrackTransition = () => {
+    // Clear inline override so CSS ease (and prefers-reduced-motion) apply again.
+    track.style.transition = "";
+  };
+
+  const onPointerUp = (event) => {
+    if (!dragging || event.pointerId !== pointerId) {
+      return;
+    }
+    dragging = false;
+    pointerId = null;
+    root.classList.remove("is-dragging");
+    restoreTrackTransition();
+    const width = frame.getBoundingClientRect().width || 1;
+    const threshold = Math.min(72, width * 0.18);
+    if (dragDelta > threshold) {
+      goTo(index - 1);
+    } else if (dragDelta < -threshold) {
+      goTo(index + 1);
+    } else {
+      render();
+      restartAuto();
+    }
+    paused = false;
+    frame.releasePointerCapture?.(event.pointerId);
+  };
+
+  frame.addEventListener("pointerdown", onPointerDown);
+  frame.addEventListener("pointermove", onPointerMove);
+  frame.addEventListener("pointerup", onPointerUp);
+  frame.addEventListener("pointercancel", onPointerUp);
+
+  root.addEventListener("mouseenter", () => {
+    paused = true;
+    stopAuto();
+  });
+  root.addEventListener("mouseleave", () => {
+    paused = false;
+    restartAuto();
+  });
+  root.addEventListener("focusin", () => {
+    paused = true;
+    stopAuto();
+  });
+  root.addEventListener("focusout", () => {
+    if (!root.contains(document.activeElement)) {
+      paused = false;
+      restartAuto();
+    }
+  });
+
+  if ("IntersectionObserver" in window) {
+    const playObserver = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.some((entry) => entry.isIntersecting && entry.intersectionRatio > 0.35);
+        if (visible) {
+          restartAuto();
+        } else {
+          stopAuto();
+        }
+      },
+      { threshold: [0, 0.35, 0.7] },
+    );
+    playObserver.observe(root);
+  } else {
+    restartAuto();
+  }
+
+  render();
+}
